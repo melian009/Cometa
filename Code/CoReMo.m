@@ -1,0 +1,259 @@
+%---------------------------------------------------------------------------
+%e-co-evolutionary rescue
+%BAD Modular scenario
+%Andreazzi, Astegiano and Melian @EAWAG DEC 2018
+
+%---------------------------------------------------------------------------
+%Plot heat map Coevolutionary rescue
+%Gradient dispersal vs. coevolutionary selection
+%---------------------------------------------------------------------------
+  
+  %%%1. FIXED PARAMETERS
+  clear;%seed=17;rng(seed);
+  MaxRep = 1;%number of replicates
+  MaxGenerations = 100; %number of generations per replicates
+  nu=0.001;%mutation rate
+  %JR = 100; JC = 100;%individuals per site == defined below in step 3
+  SR = 10;SC = 10;%Species landscape
+   %--------------------------------------------------------
+  
+  %%%2. SPATIAL MATRIX 
+  %(RGG -- homogeneous: same Theta per species\heterogeneous: gradient per species (Matrix is funciton of A trait distribution)
+  L=1000; % size of the landscape
+  P = 10;%number of sites 
+  n = unifrnd(0,L,P,2);%positions of sites RGG
+  Pd = zeros(P,P);
+  Pdmean = zeros(P,P);
+  for i = 1:P,
+      for j = i+1:P,
+          dx2 = (n(i,1) - n(j,1))^2;%Euclidean distance
+          dy2 = (n(i,2) - n(j,2))^2;
+          d(i,j) = sqrt(dx2 + dy2);%distance matrix
+          Pd(i,j) = 1/d(i,j);%the lower the distance the higher the probability
+          Pdmean(i,j) = d(i,j);%the lower the distance the higher the probability
+      end
+  end 
+  Pd(P,P) = 0;
+  Pdmean=Pdmean+Pdmean';
+  D = nonzeros(triu(Pdmean,1));
+  D = mean(D);%Optimum dispersal value
+  Pd=Pd+Pd';
+  Pdf = sinkhornKnopp(Pd);%Symmetric migration model following double stochastic matrix
+  P_ij = cumsum(Pdf,2);
+  P_ji = cumsum(Pdf,1);
+  %------------------------------------------------------
+ 
+%%%3. INITIAL SAMPLING BAD
+%Modular:
+%1. sampling 3 dist. independently for resource and consumer species
+%2. same initial distribution for each species in each site
+
+%Resources-------------------------------
+%A trait -- P patches -- N abundance each sp. -- SR number species
+muR = 0;%Initial mean trait distribution
+SRA = zeros(P,101,SR);%Check length vector BAD
+for sR = 3.5;%Std
+    Z = -1.5*sR:1e-1:1.5*sR;%Tuning 2 changes initial S abundance  
+    Zf = normpdf(Z, muR, sR);%Frequency each pehnotype Z
+    Z = Z + abs(min(Z));%Move everything to the right.
+    SRA = repmat(Z, [P,1,SR]);%3-d matrix           
+%Plotting trait distributions---
+%hold on
+%hr1 = plot(Z,Zf);%Visualize
+%a =unifrnd(0,1);
+%b =unifrnd(0,1);
+%c =unifrnd(0,1);
+%set(hr1,'color',[a b c]);
+%set(hr1,'LineWidth',2);
+%---------------------------------------------------
+end
+
+%D trait -- Extract distribution from landscape values
+%Remember D is the mean distance in the landscape
+sigma = 2; 
+Zd = (D -  5*sigma) : (sigma / 100) : (D + 5*sigma); 
+pdfNormal = normpdf(Zd, D, sigma);
+%plot(Zd, pdfNormal/max(pdfNormal));%test plot
+SRD = repmat(Zd, [P,1,SR]);%Check number of individuals: Equal BAD
+%----------------------------------------
+
+%Consumers--------------------------------
+%A trait
+muC = 0;%Initial mean trait distribution
+SCA = zeros(P,101,SC);%Check length BAD
+for sC = 3.5;%Std
+    Y = -1.5*sC:1e-1:1.5*sC;%Tuning 2 changes initial S abundance  
+    Yf = normpdf(Y, muC, sC);
+    Y = Y + abs(min(Y));%Move everything to the right.
+    SCA = repmat(Y, [P,1,SC]);%3-d matrix       
+end
+
+%D trait -- Extract distribution from landscape values
+%Remember D is the mean distance in the landscape
+sigma = 2; 
+Yd = (D -  5*sigma) : (sigma / 100) : (D + 5*sigma); 
+pdfNormal = normpdf(Zd, D, sigma);
+%plot(Zd, pdfNormal/max(pdfNormal));%test plot
+SCD = repmat(Yd, [P,1,SC]);%Check number of individuals: Equal BAD
+%---------------------------------------
+
+
+%B trait -------------------------- Matching -- W in-decreases for C-R
+%Resource
+for s = 3.35;%Std
+    Zr = -1.5*s:1e-1:1.5*s;%Tuning s or 0.5 changes initial S abundance  
+    ZrB = normpdf(Zr, 0, s);%Frequency each phenotype
+    Zr = Zr + abs(min(Zr));%Move everything to the right.
+    SRB = repmat(Zr, [10,1,10]);
+end
+%-------------------------------
+
+%Consumer
+   for s =3.35;%Std
+       Zc = -1.5*s:1e-1:1.5*s;%Tuning s or 0.5 changes initial S abundance  
+       ZrC = normpdf(Zc, 0, s);%Frequency each phenotype
+       Zc = Zc + abs(min(Zc));%Move everything to the right.
+       SCB = repmat(Zc, [10,1,10]);
+%Plotting trait distributions---
+%hold on
+%hr2 = plot(Zc,ZrC);%Visualize
+%a =unifrnd(0,1);
+%b =unifrnd(0,1);
+%c =unifrnd(0,1);
+%set(hr2,'color',[a b c]);
+%set(hr2,'LineWidth',2);
+%-------------------------------
+  end
+  
+
+  %%%4. Main
+for ri = 1:MaxRep;   
+  
+           %tic
+        %m=linspace(0,1,50);%gradient migration rate 
+       % for j = 1:length(m);
+          %  alpha=linspace(0,10,50);%gradient strength coevo selection 
+           % for k = 1:length(alpha);  
+              
+                %for t = 1:J*S;%Selection-Mating-Migration
+                    %MonteCarlo Time --> Account GEMs
+                    %(pick up site, vector W = birth, dead or migration)
+        
+        
+        
+            %l=1-(m+v);%birth rate %Define following GEMs
+            %R = zeros(S,J);       %the same species in every site
+            %R=repmat([1:S]',1,J); %a different species in every site
+     
+ %Fitness function A-----------------------%Check STPM code for plot
+alpha = 5;munewA = mean(SRA(1,:,1));
+for pA = 1:length(Z);
+WA(pA,2) = exp(-alpha*(Z(1,pA) - munewA)^2);%W each trait value A 
+WA(pA,1) = Z(1,pA) - munewA;
+end
+
+%Fitness trait D-----------------------%Check STPM code for plot
+for pD = 1:length(Zd);
+WD(pD,2) = exp(-alpha*(Zd(1,pD) - D)^2);
+WD(pD,1) = Zd(1,pD) - D;
+end
+
+%Fitness function B
+for pB = 1:length(Zr);
+WB(pB,2) = 1/(1 + exp(-alpha*(Zr(1,pB) - mean(Zc))^2));
+WB(pB,1) = Zr(1,pB) - mean(Zc);
+end
+
+%Total fitness each phenotype at time 
+%------------------------------------------
+
+%Mating --- non-overlapping -- pick up site and two parents-->
+%mutation offspring 
+
+      
+    %end
+  %end
+%end
+end
+
+
+            %------Part to be introduced in the Main -- Demography                    
+            %preallocation main matrices and vectors
+            %countgen = 0;Pairs = zeros(1,2);cevents = 0;newSp = 100;
+            %gamma=[];
+   
+            %start loop of generations
+            %for k = 1:MaxGenerations,
+            %countgen = countgen + 1;
+           
+              %W each phenotype for S = 1, 2, 3... N
+
+              %Modular W function
+
+ 
+              %Magic W function
+               
+
+            
+
+
+                %if mod(t,10), disp(['t: ' num2str(t) ' / ' num2str(J*S)]); end %Check
+              
+              %KillHab = unidrnd(S);
+               % KillInd = unidrnd(J);
+               % ep=unifrnd(0,1,1);  %event probability
+               % if ep < m,  
+                  
+                %   MHP = unifrnd(0,1);
+                %   KillHab = unidrnd(S);
+                %   if MHP >= P_ij(KillHab,KillHab);
+                %      MigrantHab = find(P_ij(KillHab,:) >= MHP,1);    
+                %   else
+                %      MigrantHab = find(P_ji(:,KillHab) >= MHP,1);
+                %   end                                  
+                    
+                %    if numel(MigrantHab)>0, 
+                        %4. Implement local birth dynamics and speciation dynamics
+                %        MigrantInd = unidrnd(J);  
+                %        cevents = cevents + 1;
+                %        Pairs(cevents,1) = KillHab;
+                %        Pairs(cevents,2) = MigrantHab(1,1); 
+                %        R(KillHab,KillInd)=R(MigrantHab(1,1),MigrantInd);            
+                %    end
+                    
+                %elseif ep <= m+v,  %mutation
+                %    newSp = newSp +1;
+                %    R(KillHab,KillInd) = newSp;
+                %else               %birth
+                %    BirthLocalInd = unidrnd(J);
+                %    while BirthLocalInd == KillInd,
+                %        BirthLocalInd = unidrnd(J);
+                %    end
+                %    R(KillHab,KillInd) = R(KillHab,BirthLocalInd);
+                %end
+              %end%t
+              
+              %Sp_eachSt=arrayfun(@(ix) unique(R(ix,:)), [1:size(R,1)],'uniformoutput',false);
+              %alpha(g)%Num of species at each site for present generation
+              %alpha = arrayfun(@(v) length(cell2mat(v)),Sp_eachSt);
+              %gamma(countgen) = numel(unique(R));
+              %alphaM(countgen) = mean(alpha);
+              %alphaSD(countgen) = std(alpha);
+            %end%loop generations  
+            
+
+            %%%5. OUTPUTS
+
+            %fnam = sprintf('Sym_A%0.4f_GPT%04d.txt',As(1,ii),GPTs(1,jj));
+            %fid = fopen(fnam,'a');
+            %fprintf(fid,'%f %f %f %3f %3f\n',ri,countgen,gamma,alphaM,alphaSD);    
+            %fnam1 = sprintf('gamma%d %d %d %d %d.txt',ri,As(1,ii),A,GPT,f);
+            %fid = fopen(fnam1,'w');
+            %fprintf(fid, [repmat('% 6f ',1,size(gamma,2)), '\n'],gamma);
+            %fprintf(fid, [repmat('% 6f ',1,size(alphaM,2)), '\n'],alphaM);
+            %fprintf(fid, [repmat('% 6f ',1,size(alphaSD,2)), '\n'],alphaSD);
+            %fclose(fid);
+            %mpost = cevents/(MaxGenerations*S*J)
+            %save([fnam '_migr_events.dat'],'Pairs', 'ri', 'mpost');
+            %toc
+          %end%ri
