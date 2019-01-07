@@ -1,22 +1,24 @@
 %=============================================================
 %Coevolutionary rescue in ecological networks
 %BAD Modular scenario
-%Andreazzi, Astegiano and Melian @EAWAG DEC 2018 (v2 JAN 2018)
+%Andreazzi, Astegiano and Melian @EAWAG DEC 2018 (v1 JAN 2018)
 %=============================================================
 
 %---------------------------------GOAL--------------------------------------
 %Plot heat map Coevolutionary rescue in gradient disper vs. coevol selection
 %---------------------------------------------------------------------------
   
-%%%1. FIXED PARAMETERS===========================================
+  %%%1. FIXED PARAMETERS===========================================
+  global Zrb Zra Zrd Zcb Zca Zcd
   clear;%seed=17;rng(seed);
   MaxRep = 1;%number of replicates
-  MaxG = 100; %number of generations per replicates
-  nu=0.001;%mutation rate (phenotypic change)
+  MaxGenerations = 100; %number of generations per replicates
+  nu=0.001;%mutation rate
+  %JR = 100; JC = 100;%individuals per site == defined below in step 3
   SR = 10;SC = 10;%Species landscape
   %================================================================
   
-%%%2. SPATIAL MATRIX========================================================
+  %%%2. SPATIAL MATRIX========================================================
   %RGG -- homogeneous: same Theta per species
   %heterogeneous: gradient per species(Matrix function of trait distribution)
   L=1000; % size of the landscape
@@ -49,9 +51,11 @@
 %2. same initial distribution for each species in each site
 
 %Resources---------------------------------------------------------------
-InitialSamplingRA;InitialSamplingRD;InitialSamplingRB;
 %Same initial condition to all species-sites
-SRB = repmat(Zrb, [P,1,SR]);
+InitialSamplingRA;InitialSamplingRD;%InitialSamplingRB;
+%size(Zrb)
+%pause
+%SRB = repmat(Zrb, [P,1,SR]);
 SRA = repmat(Zra, [P,1,SR]);
 SRD = repmat(Zrd, [P,1,SR]);
 %------------------------------------------------------------------------
@@ -67,87 +71,24 @@ SCD = repmat(Zcd, [P,1,SC]);
 %K (carrying capacity) same than total abundances: zero-sum
 %======================================================================
 
-%%%4. Main==============================================================
-  
-     for i = 1:MaxRep;%tic
-       
-         m=unifrnd(0,1);%gradient migration rate
-         alpha = unifrnd(0,10);%gradient strength coevo selection
-         
-         WR;%fitness function R
-         WC;%fitness function C
-         
-         for j = 1:MaxG;
-             for t = 1:(length(Zrb)*SR*SC)*2;%#R-C abundances landscape
-                 KillHabR = unidrnd(P);%random selection site for R
-                 KillHabC = unidrnd(P);%random selection site for C
-                 KillIndR = WR;%Kill individual sp R with prob(W)
-                 KillIndC = WC;%Kill individual sp C with prob(W)
 
-                 ep=unifrnd(0,1,1);%event probability
-                 if ep < m,  %Migration event
-                  
-                    MHP = unifrnd(0,1);
-                %   KillHab = unidrnd(S);
-                   if MHP >= P_ij(KillHabR,KillHabR);
-                      MigrantHab = find(P_ij(KillHab,:) >= MHP,1);    
-                   else
-                      MigrantHab = find(P_ji(:,KillHab) >= MHP,1);
-                   end                                  
-                    
-                %    if numel(MigrantHab)>0, %Update
-                        %4. Implement local birth dynamics and speciation dynamics
-                %        MigrantInd = unidrnd(J);  
-                %        cevents = cevents + 1;
-                %        Pairs(cevents,1) = KillHab;
-                %        Pairs(cevents,2) = MigrantHab(1,1); 
-                %        R(KillHab,KillInd)=R(MigrantHab(1,1),MigrantInd);            
-                %    end
-                    
-                %elseif ep <= m+v,  %Birth --> offspring 
-                %    newSp = newSp +1;
-                %    R(KillHab,KillInd) = newSp;
-                %else               %birth
-                %    BirthLocalInd = unidrnd(J);
-                %    while BirthLocalInd == KillInd,
-                %        BirthLocalInd = unidrnd(J);
-                %    end
-                %    R(KillHab,KillInd) = R(KillHab,BirthLocalInd);
-                %end
-              %end%t
-               
-     
-                  end
-         end
-     end
-     
-     
-%%%5. OUTPUTS=================================================================
-
-%---------------------------------------------------------------------------
-%Plot heat map Coevolutionary rescue in disper vs. coevol selection gradient
-%---------------------------------------------------------------------------
-
-
-            %fnam = sprintf('Sym_A%0.4f_GPT%04d.txt',As(1,ii),GPTs(1,jj));
-            %fid = fopen(fnam,'a');
-            %fprintf(fid,'%f %f %f %3f %3f\n',ri,countgen,gamma,alphaM,alphaSD);    
-            %fnam1 = sprintf('gamma%d %d %d %d %d.txt',ri,As(1,ii),A,GPT,f);
-            %fid = fopen(fnam1,'w');
-            %fprintf(fid, [repmat('% 6f ',1,size(gamma,2)), '\n'],gamma);
-            %fprintf(fid, [repmat('% 6f ',1,size(alphaM,2)), '\n'],alphaM);
-            %fprintf(fid, [repmat('% 6f ',1,size(alphaSD,2)), '\n'],alphaSD);
-            %fclose(fid);
-            %mpost = cevents/(MaxGenerations*S*J)
-            %save([fnam '_migr_events.dat'],'Pairs', 'ri', 'mpost');
-%=============================================================================                   
-            %toc
-   end%i
+  %%%4. Main==============================================================
   %=======================================================================
   
+  
+%for ri = 1:MaxRep;   
+  
+           %tic
+        %m=linspace(0,1,50);%gradient migration rate 
+       % for j = 1:length(m);
+          %  alpha=linspace(0,10,50);%gradient strength coevo selection 
+           % for k = 1:length(alpha);  
+              
+                %for t = 1:J*S;%Selection-Mating-Migration
+                    %MonteCarlo Time --> Account GEMs
+                    %(pick up site, vector W = birth, dead or migration)
         
         
-%----------------OLD----To be deleted------------------------------------ 
         
             %l=1-(m+v);%birth rate %Define following GEMs
             %R = zeros(S,J);       %the same species in every site
@@ -248,5 +189,20 @@ SCD = repmat(Zcd, [P,1,SC]);
               %alphaM(countgen) = mean(alpha);
               %alphaSD(countgen) = std(alpha);
             %end%loop generations  
-           
+            
+
+            %%%5. OUTPUTS
+
+            %fnam = sprintf('Sym_A%0.4f_GPT%04d.txt',As(1,ii),GPTs(1,jj));
+            %fid = fopen(fnam,'a');
+            %fprintf(fid,'%f %f %f %3f %3f\n',ri,countgen,gamma,alphaM,alphaSD);    
+            %fnam1 = sprintf('gamma%d %d %d %d %d.txt',ri,As(1,ii),A,GPT,f);
+            %fid = fopen(fnam1,'w');
+            %fprintf(fid, [repmat('% 6f ',1,size(gamma,2)), '\n'],gamma);
+            %fprintf(fid, [repmat('% 6f ',1,size(alphaM,2)), '\n'],alphaM);
+            %fprintf(fid, [repmat('% 6f ',1,size(alphaSD,2)), '\n'],alphaSD);
+            %fclose(fid);
+            %mpost = cevents/(MaxGenerations*S*J)
+            %save([fnam '_migr_events.dat'],'Pairs', 'ri', 'mpost');
+            %toc
           %end%ri
