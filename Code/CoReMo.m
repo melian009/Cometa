@@ -71,18 +71,41 @@ SCD = repmat(Zcd, [P,1,SC]);
   
      for i = 1:MaxRep;%tic
        
+       %================Loop===========================================
+       %0. N < K per site
+       %1. Random site 
+       %2. Random species (unique N < 0)
+       %3. Kill:cumsum(1/W) W function R or C
+       %4. Reorganize species row killed
+       %5. Reposition: 
+           %random < m == Migration = Site f(distance) + Random species + W(D)
+           %random > m == Birth = Random species + W(BAD) + mutation
+       %================================================================
+       
          m=unifrnd(0,1);%gradient migration rate
-         alpha = unifrnd(0,10);%gradient strength coevo selection
-         
-         WR;%fitness function R
-         WC;%fitness function C
+         gamma = unifrnd(0,10);%gradient strength coevo selection
          
          for j = 1:MaxG;
              for t = 1:(length(Zrb)*SR*SC)*2;%#R-C abundances landscape
-                 KillHabR = unidrnd(P);%random selection site for R
-                 KillHabC = unidrnd(P);%random selection site for C
-                 KillIndR = WR;%Kill individual sp R with prob(W)
-                 KillIndC = WC;%Kill individual sp C with prob(W)
+                 KillHab = unidrnd(P);%random selection site for R
+                 KillInd = unidrnd(SR);%random selection species KillHabR
+                 
+                 %W -- equal contribution == WRLoop
+                 WBADR = (WB(:,2) + WA(:,2) + WD(:,2))/3;
+                 
+                 
+                 WA(pA,2) = exp(-gamma*(Zra(1,pA) - munew)^2);
+                 WA(pA,1) = Zra(1,pA) - munew;
+                 
+                 WD(pD,2) = exp(-gamma*(Zi(1,pD) - D)^2);
+                 WD(pD,1) = Zi(1,pD) - D;
+
+                 WB(pB,2) = 1/(1 + exp(-gamma*(Zr(1,pB) - mean(Zc))^2));
+                 WB(pB,1) = Zr(1,pB) - mean(Zc);
+
+                 
+                 WR;%Kill individual sp R with prob(W)
+                 WC;%Kill ind sp C with prob(W)
 
                  ep=unifrnd(0,1,1);%event probability
                  if ep < m,  %Migration event

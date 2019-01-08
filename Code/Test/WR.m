@@ -22,11 +22,11 @@ set(hr1,'LineWidth',2);
 %Fitness function 
 munew = mean(SRA(1,:,1));
 for pA = 1:length(Zra);
-N1(pA,2) = exp(-gamma*(Zra(1,pA) - munew)^2);
-N1(pA,1) = Zra(1,pA) - munew;
+WA(pA,2) = exp(-gamma*(Zra(1,pA) - munew)^2);
+WA(pA,1) = Zra(1,pA) - munew;
 end
 subplot(3,2,2)
-hr1 = plot(N1(:,1),N1(:,2));%Visualize
+hr1 = plot(WA(:,1),WA(:,2));%Visualize
 a =unifrnd(0,1);
 b =unifrnd(0,1);
 c =unifrnd(0,1);
@@ -132,3 +132,4 @@ a =unifrnd(0,1);
 b =unifrnd(0,1);
 c =unifrnd(0,1);
 set(hr1,'color',[a b c]);
+
