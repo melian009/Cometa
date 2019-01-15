@@ -1,11 +1,11 @@
 gamma = 10;
-
+ro = 1;
 %=====================Abiotic trait=========================     
 SpatialMatrix;%Active when run alone
 SR = 10;%Species landscape
 Zm = 50;%Zm is the mean abiotic trait value
 sigma = 10;
-Zra = (Zm -  1*sigma) : (sigma / 100) : (Zm + 1*sigma); 
+Zra = (Zm -  1*sigma) : (sigma / 100) : (Zm + 1*sigma); %n change initial abu
 SRA = repmat(Zra, [10,1,10]);
 pdfNormal = normpdf(Zra, Zm, sigma);
 %Plot-----------------------------
@@ -56,7 +56,7 @@ set(hr1,'color',[a b c]);
 %Extract distribution from landscape values
 mu = D; 
     sigma = 2; 
-    Zi = (mu -  5*sigma) : (sigma / 100) : (mu + 5*sigma); 
+    Zi = (mu -  1*sigma) : (sigma / 100) : (mu + 1*sigma); 
     pdfNormal = normpdf(Zi, mu, sigma);
     %plot(x, pdfNormal/max(pdfNormal));
     SRD = repmat(Zi, [10,1,10]);
@@ -89,47 +89,38 @@ set(hr1,'color',[a b c]);
   
 %Fitness function B--------------------------
 %Resource
-   for s = 3.35;%Std
-                Zr = -1.5*s:1e-1:1.5*s;%Tuning s or 0.5 changes initial S abundance  
-                ZrB = normpdf(Zr, 0, s);%Frequency each phenotype
-                Zr = Zr + abs(min(Zr));%Move everything to the right.
-                SRB = repmat(Zr, [10,1,10]);
-%Plotting trait distributions---
-hold on
+%SR = 10;%#Resource species landscape
+Zmr = 2;%Mean biotic trait of resource species
+sigma = 12;
+Zrb = (Zmr -  ro*sigma) : (sigma / 100) : (Zmr + ro*sigma); 
+pdfNormal = normpdf(Zrb, Zmr, sigma);
+
+%Consumer
+Zmc = 4;%Mean biotic trait of resource species
+sigma = 1;
+Zcb = (Zmc -  ro*sigma) : (sigma / 100) : (Zmc + ro*sigma); 
+pdfNormal = normpdf(Zcb, Zmc, sigma);
+
+
+for pB = 1:length(Zrb);
+WB(pB,2) = 1/(1 + exp(-gamma*(Zrb(1,pB) - mean(Zcb))^2));
+WB(pB,1) = Zrb(1,pB) - mean(Zcb);
+end
+
 subplot(3,2,5)
-hr1 = plot(Zr,ZrB);%Visualize
+hr1 = plot(Zrb, pdfNormal/max(pdfNormal)); 
 a =unifrnd(0,1);
 b =unifrnd(0,1);
 c =unifrnd(0,1);
 set(hr1,'color',[a b c]);
 set(hr1,'LineWidth',2);
-end
-%-------------------------------
 
-%Consumer
-   for s =3.35;%Std
-                Zc = -1.5*s:1e-1:1.5*s;%Tuning s or 0.5 changes initial S abundance  
-                ZrC = normpdf(Zc, 0, s);%Frequency each phenotype
-                Zc = Zc + abs(min(Zc));%Move everything to the right.
-                SCB = repmat(Zc, [10,1,10]);
-%Plotting trait distributions---
 hold on
-hr2 = plot(Zc,ZrC);%Visualize
-a =unifrnd(0,1);
-b =unifrnd(0,1);
-c =unifrnd(0,1);
-set(hr2,'color',[a b c]);
-set(hr2,'LineWidth',2);
-  end
-  
-for pB = 1:length(Zr);
-WB(pB,2) = 1/(1 + exp(-gamma*(Zr(1,pB) - mean(Zc))^2));
-WB(pB,1) = Zr(1,pB) - mean(Zc);
-end
 subplot(3,2,6)
 hr1 = plot(WB(:,1),WB(:,2));%Visualize
 a =unifrnd(0,1);
 b =unifrnd(0,1);
 c =unifrnd(0,1);
 set(hr1,'color',[a b c]);
+set(hr1,'LineWidth',2);
 

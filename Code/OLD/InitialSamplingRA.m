@@ -1,9 +1,12 @@
+ 
+global SR sigma ro gamma
+
 %%%3. INITIAL SAMPLING BAD
 %SpatialMatrix;%Active when run alone
-SR = 10;%Species landscape
 Zm = 50;%Zm is the mean abiotic trait value
-sigma = 1;
-Zra = (Zm -  2*sigma) : (sigma / 100) : (Zm + 2*sigma); 
+%sigma = 1;
+%ro = 1;
+Zra = (Zm -  ro*sigma) : (sigma / 100) : (Zm + ro*sigma); 
 pdfNormal = normpdf(Zra, Zm, sigma);
 %Plot-----------------------------
 %hr1 = plot(Zra, pdfNormal);%Active when run alone to visualize distribution

@@ -13,7 +13,8 @@
   MaxRep = 1;%number of replicates
   MaxG = 100; %number of generations per replicates
   nu=0.001;%mutation rate (phenotypic change)
-  SR = 10;SC = 10;%Species landscape
+  SR = 3;SC = 1;%Species landscape
+  sigma = 1;ro = 1;
   %================================================================
   
 %%%2. SPATIAL MATRIX========================================================
@@ -46,25 +47,59 @@
 %%%3. INITIAL SAMPLING BAD==================================================
 %Modular -- P patches -- N abundance each sp and SR number resource species
 %1. sampling 3 dist. independently for each resource and consumer species
-%2. same initial distribution for each species in each site
+%2. same N but different trait values for each species in each site
+
+%Initial length +++++++++++++++++++++++++++++++++++++++++
+Z=round(unifrnd(6,10));
+Len = (Z -  ro*sigma) : (sigma / 100) : (Z + ro*sigma); 
+%++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 %Resources---------------------------------------------------------------
-InitialSamplingRA;InitialSamplingRD;InitialSamplingRB;
-%Same initial condition to all species-sites
-SRB = repmat(Zrb, [P,1,SR]);
-SRA = repmat(Zra, [P,1,SR]);
-SRD = repmat(Zrd, [P,1,SR]);
+for i = 1:P;
+    for j = 1:SR;   
+Zmr=round(unifrnd(1,4));%Mean biotic trait
+sigmar = 12;
+Zrb(j,1:length(Len)) = (Zmr -  ro*sigmar) : (sigmar / 100) : (Zmr + ro*sigmar);
+SBR(j,1:length(Len)) = j;
+
+sigmaa = 10;
+Zm = round(unifrnd(45,55));%Mean abiotic trait
+Zra(j,1:length(Len)) = (Zm -  ro*sigmaa) : (sigmaa / 100) : (Zm + ro*sigmaa); 
+
+mu = mean(D);%Optimum dispersal value;Extract distribution from landscape values
+sigmad = 2; 
+Zrd(j,1:length(Len)) = (mu -  ro*sigmad) : (sigmad / 100) : (mu + ro*sigmad); 
+    end
+    NBR(i,1:SR*length(Len)) = reshape(Zrb.',1,[]);%Matrix to vector
+    NAR(i,1:SR*length(Len)) = reshape(Zra.',1,[]);
+    NDR(i,1:SR*length(Len)) = reshape(Zrd.',1,[]);
+    RS(i,1:SR*length(Len)) = reshape(SBR.',1,[]);%Sp ID vector
+end
 %------------------------------------------------------------------------
 
 %Consumers---------------------------------------------------------------
-InitialSamplingCA;InitialSamplingCD;InitialSamplingCB;
-%Same initial condition to all species-sites
-SCB = repmat(Zcb, [P,1,SC]);
-SCA = repmat(Zca, [P,1,SC]);
-SCD = repmat(Zcd, [P,1,SC]);
+for i = 1:P;
+    for j = 1:SC;   
+Zmc=round(unifrnd(1,4));%Mean biotic trait
+sigmar = 12;
+Zcb(j,1:length(Len)) = (Zmc -  ro*sigmar) : (sigmar / 100) : (Zmc + ro*sigmar);
+SBC(j,1:length(Len)) = SR + j;
+
+sigmaa = 10;
+Zm = round(unifrnd(45,55));%Mean abiotic trait
+Zca(j,1:length(Len)) = (Zm -  ro*sigmaa) : (sigmaa / 100) : (Zm + ro*sigmaa); 
+
+mu = mean(D);%Optimum dispersal value;Extract distribution from landscape values
+sigmad = 2; 
+Zcd(j,1:length(Len)) = (mu -  ro*sigmad) : (sigmad / 100) : (mu + ro*sigmad); 
+    end
+    NBC(i,1:SC*length(Len)) = reshape(Zcb.',1,[]);%Matrix to vector
+    NAC(i,1:SC*length(Len)) = reshape(Zca.',1,[]);
+    NDC(i,1:SC*length(Len)) = reshape(Zcd.',1,[]);
+    CS(i,1:SC*length(Len)) = reshape(SBC.',1,[]);%Sp ID vector
+end
 %------------------------------------------------------------------------
 
-%K (carrying capacity) same than total abundances: zero-sum
 %======================================================================
 
 %%%4. Main==============================================================
@@ -72,10 +107,10 @@ SCD = repmat(Zcd, [P,1,SC]);
      for i = 1:MaxRep;%tic
        
        %================Loop===========================================
-       %0. N < K per site
-       %1. Random site 
-       %2. Random species (unique N < 0)
-       %3. Kill:cumsum(1/W) W function R or C
+       %0. N < K per site  OK
+       %1. Random site OK
+       %2. Random species (unique N < 0) OK
+       %3. Kill:cumsum(1/W) W function R or C OK(R)
        %4. Reorganize species row killed
        %5. Reposition: 
            %random < m == Migration = Site f(distance) + Random species + W(D)
@@ -87,36 +122,66 @@ SCD = repmat(Zcd, [P,1,SC]);
          
          for j = 1:MaxG;
              for t = 1:(length(Zrb)*SR*SC)*2;%#R-C abundances landscape
-                 KillHab = unidrnd(P);%random selection site for R
-                 KillInd = unidrnd(SR);%random selection species KillHabR
+               
+                 %--------------------Death,Random----------------------------
+                 KillHab = unidrnd(P);%random selection site
+                 a = min(min(RS));b = max(max(CS));
+                 KillSp = round(unifrnd(a,b));
+                 KillInd = find(RS(KillHab,:)) == KillSp;%INDS Sp in KillHab
+                 %KillInd = unidrnd(SR);%random selection species
+                 %------------------------------------------------------------
                  
-                 %W -- equal contribution == WRLoop
-                 WBADR = (WB(:,2) + WA(:,2) + WD(:,2))/3;
+                 %W -- equal contribution to W each trait
+                 %W Abiotic
+                 munew = mean(NAR(KillHab,KillInd));%Check KillInd
+                 for pA = 1:length(KillInd);
+                 WA(1,pA) = exp(-gamma*(NAR(KillHab,KillInd(1,pA)) - munew)^2);
+                 %WA(pA,1) = Zra(1,pA) - munew;%Distance to mean
+                 end
+               
+                 %W Dispersal  
+                 for pD = 1:length(KillInd);
+                 WA(1,pD) = exp(-gamma*(NDR(KillHab,KillInd(pD,1)) - mu)^2);
+                 %WD(pD,1) = Zi(1,pD) - D;%Distance to mean
+                 end
+                 
+                 %W Biotic
+                 for pB = 1:length(KillInd);
+                 WB(1,pB) = 1/(1 + exp(-gamma*(NBR(KillHab,KillInd(pB,1)) - mean(NBC))^2));
+                 %WB(pB,1) = Zrb(1,pB) - mean(Zcb);
+                 end
+                 WBADR = 1/((WB(1,:) + WA(1,:) + WD(1,:))/3);%W each ind Sp KillHab
+                 kill = cumsum(WBADR); K = unifrnd(min(kill),max(kill));
+                 KI = find(K >= WBADR);%KI is the dying ind
+                 
+                 %-------------------------------------------------------------
                  
                  
-                 WA(pA,2) = exp(-gamma*(Zra(1,pA) - munew)^2);
-                 WA(pA,1) = Zra(1,pA) - munew;
                  
-                 WD(pD,2) = exp(-gamma*(Zi(1,pD) - D)^2);
-                 WD(pD,1) = Zi(1,pD) - D;
+                 
+                 %Original function in WR
+                 %WA(pA,2) = exp(-gamma*(Zra(1,pA) - munew)^2);
+                 %WA(pA,1) = Zra(1,pA) - munew;
+                 
+                 %WD(pD,2) = exp(-gamma*(Zi(1,pD) - D)^2);
+                 %WD(pD,1) = Zi(1,pD) - D;
 
-                 WB(pB,2) = 1/(1 + exp(-gamma*(Zr(1,pB) - mean(Zc))^2));
-                 WB(pB,1) = Zr(1,pB) - mean(Zc);
-
+                 %WB(pB,2) = 1/(1 + exp(-gamma*(Zr(1,pB) - mean(Zc))^2));
+                 %WB(pB,1) = Zr(1,pB) - mean(Zc);
                  
-                 WR;%Kill individual sp R with prob(W)
-                 WC;%Kill ind sp C with prob(W)
+                 %WR;%Kill individual sp R with prob(W)
+                 %WC;%Kill ind sp C with prob(W)
 
-                 ep=unifrnd(0,1,1);%event probability
-                 if ep < m,  %Migration event
+                 %ep=unifrnd(0,1,1);%event probability
+                 %if ep < m,  %Migration event
                   
-                    MHP = unifrnd(0,1);
+                 %   MHP = unifrnd(0,1);
                 %   KillHab = unidrnd(S);
-                   if MHP >= P_ij(KillHabR,KillHabR);
-                      MigrantHab = find(P_ij(KillHab,:) >= MHP,1);    
-                   else
-                      MigrantHab = find(P_ji(:,KillHab) >= MHP,1);
-                   end                                  
+                 %  if MHP >= P_ij(KillHabR,KillHabR);
+                 %     MigrantHab = find(P_ij(KillHab,:) >= MHP,1);    
+                 %  else
+                 %     MigrantHab = find(P_ji(:,KillHab) >= MHP,1);
+                 %  end                                  
                     
                 %    if numel(MigrantHab)>0, %Update
                         %4. Implement local birth dynamics and speciation dynamics
@@ -140,7 +205,7 @@ SCD = repmat(Zcd, [P,1,SC]);
               %end%t
                
      
-                  end
+                 % end
          end
      end
      

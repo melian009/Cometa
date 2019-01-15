@@ -1,10 +1,15 @@
+
+global SR sigma ro gamma
+
 %%%3. INITIAL SAMPLING BAD
 %SpatialMatrix;%Active when run alone
-SR = 10;%Species landscape
 %Dm is the mean distance in the landscape obtained from SpatialMatrix
-sigma = 10;
-Zrd = (Dm -  2*sigma) : (sigma / 100) : (Dm + 2*sigma); 
-pdfNormal = normpdf(Zrd, Dm, sigma);
+%sigma = 10
+D = mean(D);%Optimum dispersal value;Extract distribution from landscape values
+mu = D; 
+    sigmad = 2; 
+    Zrd = (mu -  ro*sigmad) : (sigmad / 100) : (mu + ro*sigmad); 
+    pdfNormal = normpdf(Zrd, Dm, sigmad);
 %Plot----------------------------------
 %hr1 = plot(Zrd, pdfNormal);%Active when run alone to visualize distribution
 %hr1 = plot(Zrd, pdfNormal/max(pdfNormal));%test plot

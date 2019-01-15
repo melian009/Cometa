@@ -1,10 +1,13 @@
+
+global SR sigma ro gamma
+
 %%%3. INITIAL SAMPLING BAD
 %SpatialMatrix;%Active when run alone
-SR = 10;%#Resource species landscape
-Zm = 75;%Mean biotic trait of resource species
-sigma = 1;
-Zrb = (Zm -  2*sigma) : (sigma / 100) : (Zm + 2*sigma); 
-pdfNormal = normpdf(Zrb, Zm, sigma);
+%SR = 10;%#Resource species landscape
+Zmr = 2;%Mean biotic trait of resource species
+sigmar = 12;
+Zrb = (Zmr -  ro*sigmar) : (sigmar / 100) : (Zmr + ro*sigmar); 
+pdfNormal = normpdf(Zrb, Zmr, sigmar);
 %Plot-----------------------------
 %hr1 = plot(Zrb, pdfNormal);%Active when run alone to visualize distribution
 %hr1 = plot(Zrb, pdfNormal/max(pdfNormal));%test plot
