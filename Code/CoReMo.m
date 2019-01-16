@@ -1,7 +1,7 @@
 %=============================================================
 %Coevolutionary rescue in ecological networks
 %BAD Modular scenario
-%Andreazzi, Astegiano and Melian @EAWAG DEC 2018 (v2 JAN 2018)
+%Andreazzi, Astegiano and Melian @EAWAG DEC 2018 (v1.3 JAN 2018)
 %=============================================================
 
 %---------------------------------GOAL--------------------------------------
@@ -110,7 +110,7 @@ end
        %0. N < K per site  OK
        %1. Random site OK
        %2. Random species (unique N < 0) OK
-       %3. Kill:cumsum(1/W) W function R or C OK(R)
+       %3. Kill:cumsum(1/W) W function R or C OK(R and C)
        %4. Reorganize species row killed
        %5. Reposition: 
            %random < m == Migration = Site f(distance) + Random species + W(D)
@@ -123,76 +123,110 @@ end
          for j = 1:MaxG;
              for t = 1:(length(Zrb)*SR*SC)*2;%#R-C abundances landscape
                
-                 %--------------------Death,Random----------------------------
+                 %--------------------Death----------------------------
                  KillHab = unidrnd(P);%random selection site
                  a = min(min(RS));b = max(max(CS));
                  KillSp = round(unifrnd(a,b));
-                 KillInd = find(RS(KillHab,:)) == KillSp;%INDS Sp in KillHab
-                 %KillInd = unidrnd(SR);%random selection species
-                 %------------------------------------------------------------
-                 
-                 %W -- equal contribution to W each trait
+              if KillSp <= SR;
+                 KillInd = find(RS(KillHab,:) == KillSp);%INDS Sp in KillHab
+                                      
+                 %W===equal contribution to W each trait resources =========
                  %W Abiotic
-                 munew = mean(NAR(KillHab,KillInd));%Check KillInd
+                 munewR = mean(NAR(KillHab,KillInd));%Check KillInd
+                 
                  for pA = 1:length(KillInd);
-                 WA(1,pA) = exp(-gamma*(NAR(KillHab,KillInd(1,pA)) - munew)^2);
-                 %WA(pA,1) = Zra(1,pA) - munew;%Distance to mean
+                 WA(1,pA) = exp(-gamma*(NAR(KillHab,KillInd(1,pA)) - munewR)^2);
+                 %WA(pA,1) = Zra(1,pA) - munewR;%Distance to mean
                  end
                
                  %W Dispersal  
                  for pD = 1:length(KillInd);
-                 WA(1,pD) = exp(-gamma*(NDR(KillHab,KillInd(pD,1)) - mu)^2);
+                 WD(1,pD) = exp(-gamma*(NDR(KillHab,KillInd(1,pD)) - mu)^2);
                  %WD(pD,1) = Zi(1,pD) - D;%Distance to mean
                  end
                  
                  %W Biotic
                  for pB = 1:length(KillInd);
-                 WB(1,pB) = 1/(1 + exp(-gamma*(NBR(KillHab,KillInd(pB,1)) - mean(NBC))^2));
+                 WB(1,pB) = 1/(1 + exp(-gamma*(NBR(KillHab,KillInd(1,pB)) - mean(NBC(KillHab,:)))^2));
                  %WB(pB,1) = Zrb(1,pB) - mean(Zcb);
                  end
-                 WBADR = 1/((WB(1,:) + WA(1,:) + WD(1,:))/3);%W each ind Sp KillHab
-                 kill = cumsum(WBADR); K = unifrnd(min(kill),max(kill));
-                 KI = find(K >= WBADR);%KI is the dying ind
+               
+                 %W to die
+                 DieWBADR = 1./((WB+WA+WD)/3)          
+                 Kill = cumsum(DieWBADR)
+                 K = unifrnd(0,max(Kill))
+                 KI = find(K <= Kill)%1st KI is the dying ind
+                 Kill(KI(1,1));%Ind to replace from 
+                 %NBR(KI(1,1));NAR(KI(1,1));NDR(KI(1,1))
+                 %pause %to test
                  
-                 %-------------------------------------------------------------
+              else %CHECK 1
+                 KillInd = find(CS(KillHab,:) == KillSp);
                  
+                 %W===equal contribution to W each trait consumers =========
+                 %W Abiotic
+                 munewC = mean(NAC(KillHab,KillInd));%Check KillInd
                  
+                 for pA = 1:length(KillInd);
+                 WA(1,pA) = exp(-gamma*(NAC(KillHab,KillInd(1,pA)) - munewC)^2);
+                 %WA(pA,1) = Zca(1,pA) - munewC;%Distance to mean
+                 end
+               
+                 %W Dispersal  
+                 for pD = 1:length(KillInd);
+                 WD(1,pD) = exp(-gamma*(NDC(KillHab,KillInd(1,pD)) - mu)^2);
+                 %WD(pD,1) = Zi(1,pD) - D;%Distance to mean
+                 end
                  
-                 
-                 %Original function in WR
-                 %WA(pA,2) = exp(-gamma*(Zra(1,pA) - munew)^2);
-                 %WA(pA,1) = Zra(1,pA) - munew;
-                 
-                 %WD(pD,2) = exp(-gamma*(Zi(1,pD) - D)^2);
-                 %WD(pD,1) = Zi(1,pD) - D;
+                 %W Biotic
+                 for pB = 1:length(KillInd);
+                 WB(1,pB) = exp(-gamma*(NBC(KillHab,KillInd(1,pB)) - mean(NBR(KillHab,:)))^2);
+                 %WB(pB,1) = Zrb(1,pB) - mean(Zcb);
+                 end
+               
+                 %W to die
+                 DieWBADR = 1./((WB+WA+WD)/3)          
+                 Kill = cumsum(DieWBADR)
+                 K = unifrnd(0,max(Kill))
+                 KI = find(K <= Kill)%1st KI is the dying ind
+                 Kill(KI(1,1));%Ind to replace from 
+                 %NBR(KI(1,1));NAR(KI(1,1));NDR(KI(1,1))
+                 %pause %to test
+              end       
+                 %==========================================================
 
-                 %WB(pB,2) = 1/(1 + exp(-gamma*(Zr(1,pB) - mean(Zc))^2));
-                 %WB(pB,1) = Zr(1,pB) - mean(Zc);
-                 
-                 %WR;%Kill individual sp R with prob(W)
-                 %WC;%Kill ind sp C with prob(W)
-
-                 %ep=unifrnd(0,1,1);%event probability
-                 %if ep < m,  %Migration event
+                 %CHECK 2: distinction resources and consumers
+                 ep=unifrnd(0,1,1);%event probability
+                 if ep < m, %Migration event
+                  %random < m == Migration = Site f(distance) + Random species + W(D)
                   
-                 %   MHP = unifrnd(0,1);
+                    MHP = unifrnd(0,1);
                 %   KillHab = unidrnd(S);
-                 %  if MHP >= P_ij(KillHabR,KillHabR);
-                 %     MigrantHab = find(P_ij(KillHab,:) >= MHP,1);    
-                 %  else
-                 %     MigrantHab = find(P_ji(:,KillHab) >= MHP,1);
-                 %  end                                  
-                    
-                %    if numel(MigrantHab)>0, %Update
-                        %4. Implement local birth dynamics and speciation dynamics
+                   if MHP >= P_ij(KillHab,KillHab);
+                      MigrantHab = find(P_ij(KillHab,:) >= MHP,1);    
+                   else
+                      MigrantHab = find(P_ji(:,KillHab) >= MHP,1);
+                   end                                                      
+                   if numel(MigrantHab)>0,%Update
                 %        MigrantInd = unidrnd(J);  
                 %        cevents = cevents + 1;
                 %        Pairs(cevents,1) = KillHab;
                 %        Pairs(cevents,2) = MigrantHab(1,1); 
                 %        R(KillHab,KillInd)=R(MigrantHab(1,1),MigrantInd);            
-                %    end
+                   end
                     
-                %elseif ep <= m+v,  %Birth --> offspring 
+                 elseif ep <= m+v,%Birth --> offspring 
+                %CHECK 3: distinction resources and consumers
+
+                 BirthWBADR = (WB+WA+WD)/3;          
+                 Birth = cumsum(DieWBADR)
+                 B = unifrnd(0,max(Birth))
+                 BI = find(B <= Birth)%1st BI is the reproducing ind
+                 Birth(BI(1,1));%Ind to reproduce from 
+                 %NBR(BI(1,1));NAR(BI(1,1));NDR(BI(1,1))
+                 
+                 %W to birth
+                    
                 %    newSp = newSp +1;
                 %    R(KillHab,KillInd) = newSp;
                 %else               %birth
@@ -201,22 +235,18 @@ end
                 %        BirthLocalInd = unidrnd(J);
                 %    end
                 %    R(KillHab,KillInd) = R(KillHab,BirthLocalInd);
-                %end
-              %end%t
+                 end
+              end%t
                
      
-                 % end
-         end
-     end
-     
+     end%MaxG
      
 %%%5. OUTPUTS=================================================================
 
+%CHECK 4 
 %---------------------------------------------------------------------------
 %Plot heat map Coevolutionary rescue in disper vs. coevol selection gradient
 %---------------------------------------------------------------------------
-
-
             %fnam = sprintf('Sym_A%0.4f_GPT%04d.txt',As(1,ii),GPTs(1,jj));
             %fid = fopen(fnam,'a');
             %fprintf(fid,'%f %f %f %3f %3f\n',ri,countgen,gamma,alphaM,alphaSD);    
@@ -230,111 +260,6 @@ end
             %save([fnam '_migr_events.dat'],'Pairs', 'ri', 'mpost');
 %=============================================================================                   
             %toc
-   end%i
-  %=======================================================================
-  
-        
-        
-%----------------OLD----To be deleted------------------------------------ 
-        
-            %l=1-(m+v);%birth rate %Define following GEMs
-            %R = zeros(S,J);       %the same species in every site
-            %R=repmat([1:S]',1,J); %a different species in every site
-     
- %Fitness function A-----------------------%Check STPM code for plot
-%alpha = 5;munewA = mean(SRA(1,:,1));
-%for pA = 1:length(Z);
-%WA(pA,2) = exp(-alpha*(Z(1,pA) - munewA)^2);%W each trait value A 
-%WA(pA,1) = Z(1,pA) - munewA;
-%end
-
-%Fitness trait D-----------------------%Check STPM code for plot
-%for pD = 1:length(Zd);
-%WD(pD,2) = exp(-alpha*(Zd(1,pD) - D)^2);
-%WD(pD,1) = Zd(1,pD) - D;
-%end
-
-%Fitness function B
-%for pB = 1:length(Zr);
-%WB(pB,2) = 1/(1 + exp(-alpha*(Zr(1,pB) - mean(Zc))^2));
-%WB(pB,1) = Zr(1,pB) - mean(Zc);
-%end
-
-%Total fitness each phenotype at time 
-%------------------------------------------
-
-%Mating --- non-overlapping -- pick up site and two parents-->
-%mutation offspring 
-
-      
-    %end
-  %end
-%end
-%end
-
-
-            %------Part to be introduced in the Main -- Demography                    
-            %preallocation main matrices and vectors
-            %countgen = 0;Pairs = zeros(1,2);cevents = 0;newSp = 100;
-            %gamma=[];
-   
-            %start loop of generations
-            %for k = 1:MaxGenerations,
-            %countgen = countgen + 1;
-           
-              %W each phenotype for S = 1, 2, 3... N
-
-              %Modular W function
-
+   end%MaxRep
+%=======================================================================
  
-              %Magic W function
-               
-
-            
-
-
-                %if mod(t,10), disp(['t: ' num2str(t) ' / ' num2str(J*S)]); end %Check
-              
-              %KillHab = unidrnd(S);
-               % KillInd = unidrnd(J);
-               % ep=unifrnd(0,1,1);  %event probability
-               % if ep < m,  
-                  
-                %   MHP = unifrnd(0,1);
-                %   KillHab = unidrnd(S);
-                %   if MHP >= P_ij(KillHab,KillHab);
-                %      MigrantHab = find(P_ij(KillHab,:) >= MHP,1);    
-                %   else
-                %      MigrantHab = find(P_ji(:,KillHab) >= MHP,1);
-                %   end                                  
-                    
-                %    if numel(MigrantHab)>0, 
-                        %4. Implement local birth dynamics and speciation dynamics
-                %        MigrantInd = unidrnd(J);  
-                %        cevents = cevents + 1;
-                %        Pairs(cevents,1) = KillHab;
-                %        Pairs(cevents,2) = MigrantHab(1,1); 
-                %        R(KillHab,KillInd)=R(MigrantHab(1,1),MigrantInd);            
-                %    end
-                    
-                %elseif ep <= m+v,  %mutation
-                %    newSp = newSp +1;
-                %    R(KillHab,KillInd) = newSp;
-                %else               %birth
-                %    BirthLocalInd = unidrnd(J);
-                %    while BirthLocalInd == KillInd,
-                %        BirthLocalInd = unidrnd(J);
-                %    end
-                %    R(KillHab,KillInd) = R(KillHab,BirthLocalInd);
-                %end
-              %end%t
-              
-              %Sp_eachSt=arrayfun(@(ix) unique(R(ix,:)), [1:size(R,1)],'uniformoutput',false);
-              %alpha(g)%Num of species at each site for present generation
-              %alpha = arrayfun(@(v) length(cell2mat(v)),Sp_eachSt);
-              %gamma(countgen) = numel(unique(R));
-              %alphaM(countgen) = mean(alpha);
-              %alphaSD(countgen) = std(alpha);
-            %end%loop generations  
-           
-          %end%ri
