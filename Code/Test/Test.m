@@ -34,9 +34,9 @@ set(hr2,'color',[a b c]);
 set(hr2,'LineWidth',2);
   end
   
-gamma = 5;
+gamma = 0;
 for pB = 1:length(Zr);
-WB(pB,2) = 1/(1 + exp(-gamma*(Zr(1,pB) - mean(Zc))^2));
+WB(pB,2) = exp(-gamma*(Zr(1,pB) - mean(Zc))^2);
 WB(pB,1) = Zr(1,pB) - mean(Zc);
 end
 subplot(3,2,6)

@@ -1,28 +1,45 @@
-%=============================================================
+%=================================================================
 %Coevolutionary rescue in ecological networks
+%Coevolutionary biodiversity rescue in multitrait landscapes (alt)
 %BAD Modular scenario
-%Andreazzi, Astegiano and Melian @EAWAG DEC 2018 (v1.3 JAN 2018)
-%=============================================================
+%Andreazzi, Astegiano and Melian @EAWAG DEC 2018
+%=================================================================
 
 %---------------------------------GOAL--------------------------------------
 %Plot heat map Coevolutionary rescue in gradient disper vs. coevol selection
 %---------------------------------------------------------------------------
+
+clear;%seed=17;rng(seed);%depending running matlab or octave
+
+MaxRep = 10;%number of replicates
+for r = 1:MaxRep;%tic -- #replicates  
+  
+         %=====MIGRATION AND COEVOLUTIONARY SELECTION GRADIENT============
+         m=unifrnd(0,1);%gradient migration rate
+         gamma = unifrnd(0,10);%gradient strength coevo selection
+         %-----OUTPUTS--------------------------------------------------------------
+         fnamR = sprintf('CoremoR_m%0.4f_gamma%04d',m,gamma);
+         fnamC = sprintf('CoremoC_m%0.4f_gamma%04d',m,gamma);
+         fnamDistanceMatrix = sprintf('CoremoDM_m%0.4f_gamma%04d',m,gamma);
+         %==========================================================================
   
 %%%1. FIXED PARAMETERS===========================================
-  clear;%seed=17;rng(seed);
-  MaxRep = 1;%number of replicates
-  MaxG = 100; %number of generations per replicates
-  nu=0.001;%mutation rate (phenotypic change)
-  SR = 3;SC = 1;%Species landscape
-  sigma = 1;ro = 1;
-  %================================================================
+  MaxG = 1000; %number of generations per replicates
+  nua=0.001;%rate phenotypic change
+  nub=-0.001;%rate phenotypic change
+  SR = 4;SC = 4;%Initial species in landscape
+%================================================================
   
 %%%2. SPATIAL MATRIX========================================================
-  %RGG -- homogeneous: same Theta per species
-  %heterogeneous: gradient per species(Matrix function of trait distribution)
-  L=1000; % size of the landscape
+  %We will use random geometric graphs (RGG) in homogeneous landscapes:
+  %Each species have the same abiotic optima across al sites. As discussed, 
+  %the alternative can be to explore an heterogeneous gradient: Each species
+  %a different abiotic optima across in each site.
+  %=========================================================================
+  
+  L=1000;%size of the landscape
   P = 10;%number of sites 
-  n = unifrnd(0,L,P,2);%positions of sites RGG
+  n = unifrnd(0,L,P,2);%two coordinates each sites
   Pd = zeros(P,P);
   Pdmean = zeros(P,P);
   for i = 1:P,
@@ -30,236 +47,392 @@
           dx2 = (n(i,1) - n(j,1))^2;%Euclidean distance
           dy2 = (n(i,2) - n(j,2))^2;
           d(i,j) = sqrt(dx2 + dy2);%distance matrix
-          Pd(i,j) = 1/d(i,j);%the lower the distance the higher the probability
-          Pdmean(i,j) = d(i,j);%the lower the distance the higher the probability
+          Pd(i,j) = 1/d(i,j);
+          %==================================================================
+          %the lower the distance between i and j the higher the probability
+          %to move individuals between them
+          %==================================================================        
+          Pdmean(i,j) = d(i,j);%mean distance across all pairs of sites
       end
   end 
   Pd(P,P) = 0;
   Pdmean=Pdmean+Pdmean';
   D = nonzeros(triu(Pdmean,1));
-  Dm = mean(D);%Optimum dispersal value
+  Dm = mean(D);%Optimum dispersal value for the dispersal trait comparison
   Pd=Pd+Pd';
-  Pdf = sinkhornKnopp(Pd);%Symmetric migration model following double stochastic matrix
+  Pdf = sinkhornKnopp(Pd);%Symmetric migration foll. double stochastic matrix
   P_ij = cumsum(Pdf,2);
   P_ji = cumsum(Pdf,1);
   %===========================================================================
  
-%%%3. INITIAL SAMPLING BAD==================================================
-%Modular -- P patches -- N abundance each sp and SR number resource species
-%1. sampling 3 dist. independently for each resource and consumer species
+%%%3. INITIAL SAMPLING BAD traits=============================================
+%Modular -- P patches -- abundance N each sp -- SR number resource species
+%1. sampling 3 distributions independently for each resource and consumer sp.
 %2. same N but different trait values for each species in each site
+%=============================================================================
 
-%Initial length +++++++++++++++++++++++++++++++++++++++++
-Z=round(unifrnd(6,10));
-Len = (Z -  ro*sigma) : (sigma / 100) : (Z + ro*sigma); 
-%++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+%Initial Carrying capacity per site ++++++++++++++++++++++++++++++++++++++++++++++++++
+Z=round(unifrnd(6,10));%arbitrary boundary values for the trait
+sigma = 1;ro = 1;%mean & var initial trait distribution
+Len = (Z -  ro*sigma) : (sigma / 100) : (Z + ro*sigma);%initial abundance each species
+%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-%Resources---------------------------------------------------------------
-for i = 1:P;
-    for j = 1:SR;   
-Zmr=round(unifrnd(1,4));%Mean biotic trait
-sigmar = 12;
-Zrb(j,1:length(Len)) = (Zmr -  ro*sigmar) : (sigmar / 100) : (Zmr + ro*sigmar);
-SBR(j,1:length(Len)) = j;
+%Resources=====================================================================
+for i = 1:P;%loop sites
+    for j = 1:SR;%loop resource species   
+        %Sampling biotic trait=========================================================
+        Zmr=round(unifrnd(1,4));%initial mean biotic trait
+        sigmar = 12;%initial variance biotic trait
+        Zrb(j,1:length(Len)) = (Zmr -  ro*sigmar) : (sigmar / 100) : (Zmr + ro*sigmar);
+        SBR(j,1:length(Len)) = j;%track number of resource species
+        %==============================================================================
 
-sigmaa = 10;
-Zm = round(unifrnd(45,55));%Mean abiotic trait
-Zra(j,1:length(Len)) = (Zm -  ro*sigmaa) : (sigmaa / 100) : (Zm + ro*sigmaa); 
-
-mu = mean(D);%Optimum dispersal value;Extract distribution from landscape values
-sigmad = 2; 
-Zrd(j,1:length(Len)) = (mu -  ro*sigmad) : (sigmad / 100) : (mu + ro*sigmad); 
+        %Sampling abiotic trait========================================================
+        Zm = round(unifrnd(45,55));%initial mean abiotic trait
+        sigmaa = 10;%initial variance abiotic trait
+        Zra(j,1:length(Len)) = (Zm -  ro*sigmaa) : (sigmaa / 100) : (Zm + ro*sigmaa); 
+        
+        %Sampling dispersal trait=======================================================
+        mu = mean(D);%optimum dispersal value obtained from all pairwise distance values
+        sigmad = 2;%initial variance dispersal trait
+        Zrd(j,1:length(Len)) = (mu -  ro*sigmad) : (sigmad / 100) : (mu + ro*sigmad); 
+        %===============================================================================
     end
-    NBR(i,1:SR*length(Len)) = reshape(Zrb.',1,[]);%Matrix to vector
-    NAR(i,1:SR*length(Len)) = reshape(Zra.',1,[]);
-    NDR(i,1:SR*length(Len)) = reshape(Zrd.',1,[]);
-    RS(i,1:SR*length(Len)) = reshape(SBR.',1,[]);%Sp ID vector
+    %===========Site-resource species-trait-matrix========================
+    %This matrix tracks all individuals per site and trait distributions.
+    %Each site is at its carrying capacity
+    %=====================================================================
+    %site i ... trait j species k (zijk,...)
+    %...
+    %...
+    %=====================================================================
+    NBR(i,1:SR*length(Len)) = reshape(Zrb.',1,[]);%biotic trait 
+    NAR(i,1:SR*length(Len)) = reshape(Zra.',1,[]);%abiotic trait
+    NDR(i,1:SR*length(Len)) = reshape(Zrd.',1,[]);%dispersal trait
+    RS(i,1:SR*length(Len)) = reshape(SBR.',1,[]);%sp. ID resource vector
 end
-%------------------------------------------------------------------------
+%==============================================================================
 
-%Consumers---------------------------------------------------------------
-for i = 1:P;
-    for j = 1:SC;   
-Zmc=round(unifrnd(1,4));%Mean biotic trait
-sigmar = 12;
-Zcb(j,1:length(Len)) = (Zmc -  ro*sigmar) : (sigmar / 100) : (Zmc + ro*sigmar);
-SBC(j,1:length(Len)) = SR + j;
+%Consumers=====================================================================
+for i = 1:P;%loop sites
+    for j = 1:SC;%loop consumer species   
+        %Sampling biotic trait=========================================================
+        Zmc=round(unifrnd(1,4));%initial mean biotic trait
+        sigmar = 12;%initial variance dispersal trait
+        Zcb(j,1:length(Len)) = (Zmc -  ro*sigmar) : (sigmar / 100) : (Zmc + ro*sigmar);
+        SBC(j,1:length(Len)) = SR + j;%track total number of species res + consumer
+        %==============================================================================
 
-sigmaa = 10;
-Zm = round(unifrnd(45,55));%Mean abiotic trait
-Zca(j,1:length(Len)) = (Zm -  ro*sigmaa) : (sigmaa / 100) : (Zm + ro*sigmaa); 
+        %Sampling abiotic trait======================================================
+        Zm = round(unifrnd(45,55));%Mean abiotic trait
+        sigmaa = 10;
+        Zca(j,1:length(Len)) = (Zm -  ro*sigmaa) : (sigmaa / 100) : (Zm + ro*sigmaa);
+        %============================================================================ 
 
-mu = mean(D);%Optimum dispersal value;Extract distribution from landscape values
-sigmad = 2; 
-Zcd(j,1:length(Len)) = (mu -  ro*sigmad) : (sigmad / 100) : (mu + ro*sigmad); 
+        %Sampling dispersal trait=======================================================
+        mu = mean(D);%optimum dispersal value obtained from all pairwise distance values
+        sigmad = 2;%initial variance dispersal trait
+        Zcd(j,1:length(Len)) = (mu -  ro*sigmad) : (sigmad / 100) : (mu + ro*sigmad); 
+        %===============================================================================
     end
-    NBC(i,1:SC*length(Len)) = reshape(Zcb.',1,[]);%Matrix to vector
-    NAC(i,1:SC*length(Len)) = reshape(Zca.',1,[]);
-    NDC(i,1:SC*length(Len)) = reshape(Zcd.',1,[]);
-    CS(i,1:SC*length(Len)) = reshape(SBC.',1,[]);%Sp ID vector
+    %===========Site-consumer species-trait-matrix========================
+    %This matrix tracks all individuals per site and trait distributions.
+    %Each site is at its carrying capacity
+    %=====================================================================
+    %site i ... trait j species k (zijk,...)
+    %...
+    %...
+    %=====================================================================
+    NBC(i,1:SC*length(Len)) = reshape(Zcb.',1,[]);%biotic trait
+    NAC(i,1:SC*length(Len)) = reshape(Zca.',1,[]);%abiotic trait
+    NDC(i,1:SC*length(Len)) = reshape(Zcd.',1,[]);%dispersal trait
+    CS(i,1:SC*length(Len)) = reshape(SBC.',1,[]);%sp ID consumer vector
 end
-%------------------------------------------------------------------------
+%==============================================================================
 
-%======================================================================
-
-%%%4. Main==============================================================
-  
-     for i = 1:MaxRep;%tic
-       
-       %================Loop===========================================
-       %0. N < K per site  OK
-       %1. Random site OK
-       %2. Random species (unique N < 0) OK
-       %3. Kill:cumsum(1/W) W function R or C OK(R and C)
-       %4. Reorganize species row killed
-       %5. Reposition: 
-           %random < m == Migration = Site f(distance) + Random species + W(D)
-           %random > m == Birth = Random species + W(BAD) + mutation
-       %================================================================
-       
-         m=unifrnd(0,1);%gradient migration rate
-         gamma = unifrnd(0,10);%gradient strength coevo selection
-         
-         for j = 1:MaxG;
-             for t = 1:(length(Zrb)*SR*SC)*2;%#R-C abundances landscape
+%%%4. MAIN==============================================================
+         for j = 1:MaxG;%# generations per replicate
+             for t = 1:length(Zrb)*SR*P + length(Zcb)*SC*P;
+                 %==============GENERATION======================================
+                 %one generation equals total #individuals in the landscape
+                 %zero-sum dynamics: never empty sites == #individuals landscape
+                 %============================================================== 
                
+                 %==========TRAIT DRIVEN DEMOGRAPHY============================
                  %--------------------Death----------------------------
                  KillHab = unidrnd(P);%random selection site
-                 a = min(min(RS));b = max(max(CS));
-                 KillSp = round(unifrnd(a,b));
+                 a = min(min(RS));%lowest species ID
+                 b = max(max(CS));%highest species ID
+                 KillSp = round(unifrnd(a,b));%random selection species ID
+                 %========================================================
+                 %Simultaneous resource and consumer dynamics 
+                 %KillSp selects randomly a resource or consumer species ID
+                 %========================================================
+                 
               if KillSp <= SR;
-                 KillInd = find(RS(KillHab,:) == KillSp);%INDS Sp in KillHab
+                 KillInd = find(RS(KillHab,:) == KillSp);%list inds species ID
                                       
-                 %W===equal contribution to W each trait resources =========
-                 %W Abiotic
-                 munewR = mean(NAR(KillHab,KillInd));%Check KillInd
+                 %W===MODULAR==================================
+                 %equal contribution to W each trait resources
+                 %=============================================
                  
+                 %Fitness, W Abiotic======================================
+                 %Obtain optimal abiotic mean from population at each time
+                 %--------------------------------------------------------
+                 munewR = mean(NAR(KillHab,KillInd));
+                 
+                 %Calculate fitness each individual, W, ===============================
                  for pA = 1:length(KillInd);
-                 WA(1,pA) = exp(-gamma*(NAR(KillHab,KillInd(1,pA)) - munewR)^2);
-                 %WA(pA,1) = Zra(1,pA) - munewR;%Distance to mean
+                     WA(1,pA) = exp(-gamma*(NAR(KillHab,KillInd(1,pA)) - munewR)^2);
+                     %WA(2,pA) = Zra(1,pA) - munewR;%Distance to mean for visualization
                  end
-               
-                 %W Dispersal  
+                 %=====================================================================
+                 
+                 %W Dispersal====================================================
                  for pD = 1:length(KillInd);
-                 WD(1,pD) = exp(-gamma*(NDR(KillHab,KillInd(1,pD)) - mu)^2);
-                 %WD(pD,1) = Zi(1,pD) - D;%Distance to mean
+                     WD(1,pD) = exp(-gamma*(NDR(KillHab,KillInd(1,pD)) - mu)^2);
+                     %WD(pD,1) = Zi(1,pD) - D;%Distance to mean for visualization
                  end
-                 
-                 %W Biotic
-                 for pB = 1:length(KillInd);
-                 WB(1,pB) = 1/(1 + exp(-gamma*(NBR(KillHab,KillInd(1,pB)) - mean(NBC(KillHab,:)))^2));
-                 %WB(pB,1) = Zrb(1,pB) - mean(Zcb);
-                 end
+                 %===============================================================
                
-                 %W to die
-                 DieWBADR = 1./((WB+WA+WD)/3)          
-                 Kill = cumsum(DieWBADR)
-                 K = unifrnd(0,max(Kill))
-                 KI = find(K <= Kill)%1st KI is the dying ind
-                 Kill(KI(1,1));%Ind to replace from 
-                 %NBR(KI(1,1));NAR(KI(1,1));NDR(KI(1,1))
-                 %pause %to test
+                 %W Biotic=================================================================================
+                 for pB = 1:length(KillInd);
+                     WB(1,pB) = 1/(1 + exp(-gamma*(NBR(KillHab,KillInd(1,pB)) - mean(NBC(KillHab,:)))^2));
+                     %WB(pB,1) = Zrb(1,pB) - mean(Zcb);%Distance to mean for visualization
+                 end
+                 %=========================================================================================
+               
+                 %W each individual to obtain probability to die==============
+                 DieWBADR = 1./((WB+WA+WD)/3);         
+                 Kill = cumsum(DieWBADR);
+                 K = unifrnd(0,max(Kill));
+                 KI = find(K <= Kill);%1st in the KI list is the dying ind
+                 Kill(KI(1,1));%Ind to replace from                  
+              else
+                 KillInd = find(CS(KillHab,:) == KillSp);%list species ID
                  
-              else %CHECK 1
-                 KillInd = find(CS(KillHab,:) == KillSp);
+                 %W===MODULAR =======================================
+                 %equal contribution to W each trait consumers
+                 %===================================================
                  
-                 %W===equal contribution to W each trait consumers =========
-                 %W Abiotic
+                 %Fitness, W Abiotic===================================
                  munewC = mean(NAC(KillHab,KillInd));%Check KillInd
                  
+                 %Calculate fitness each individual, W=================================
                  for pA = 1:length(KillInd);
-                 WA(1,pA) = exp(-gamma*(NAC(KillHab,KillInd(1,pA)) - munewC)^2);
-                 %WA(pA,1) = Zca(1,pA) - munewC;%Distance to mean
+                     WA(1,pA) = exp(-gamma*(NAC(KillHab,KillInd(1,pA)) - munewC)^2);
+                     %WA(pA,1) = Zca(1,pA) - munewC;%Distance to mean for visualization
                  end
+                 %=====================================================================
                
-                 %W Dispersal  
+                 %W Dispersal====================================================
                  for pD = 1:length(KillInd);
-                 WD(1,pD) = exp(-gamma*(NDC(KillHab,KillInd(1,pD)) - mu)^2);
-                 %WD(pD,1) = Zi(1,pD) - D;%Distance to mean
+                     WD(1,pD) = exp(-gamma*(NDC(KillHab,KillInd(1,pD)) - mu)^2);
+                     %WD(pD,1) = Zi(1,pD) - D;%Distance to mean for visualization
                  end
+                 %===============================================================
                  
-                 %W Biotic
+                 %W Biotic========================================================================
                  for pB = 1:length(KillInd);
-                 WB(1,pB) = exp(-gamma*(NBC(KillHab,KillInd(1,pB)) - mean(NBR(KillHab,:)))^2);
-                 %WB(pB,1) = Zrb(1,pB) - mean(Zcb);
+                     WB(1,pB) = exp(-gamma*(NBC(KillHab,KillInd(1,pB)) - mean(NBR(KillHab,:)))^2);
+                     %WB(pB,1) = Zrb(1,pB) - mean(Zcb);%Distance to mean for visualization
                  end
+                 %================================================================================
                
-                 %W to die
-                 DieWBADR = 1./((WB+WA+WD)/3)          
-                 Kill = cumsum(DieWBADR)
-                 K = unifrnd(0,max(Kill))
-                 KI = find(K <= Kill)%1st KI is the dying ind
-                 Kill(KI(1,1));%Ind to replace from 
-                 %NBR(KI(1,1));NAR(KI(1,1));NDR(KI(1,1))
-                 %pause %to test
+                 %W each individual to obtain probability to die
+                 DieWBADC = 1./((WB+WA+WD)/3);        
+                 Kill = cumsum(DieWBADC);
+                 K = unifrnd(0,max(Kill));
+                 KI = find(K <= Kill);%1st in the KI list is the dying ind
+                 %KI(1,1);%Ind to replace from 
               end       
-                 %==========================================================
-
-                 %CHECK 2: distinction resources and consumers
-                 ep=unifrnd(0,1,1);%event probability
-                 if ep < m, %Migration event
-                  %random < m == Migration = Site f(distance) + Random species + W(D)
-                  
+              %==========================================================
+              
+              
+              %Second step trait DEMOGRAPHY: ================================
+              %replace death ind by local birth or by migration
+              %==============================================================
+                               
+                 ep=unifrnd(0,1,1);%event probability to have local birth or migration
+                 if ep <= m,%we have a migration event
+                   
+                    %Loop to select from which site we choose the migrant=======
                     MHP = unifrnd(0,1);
-                %   KillHab = unidrnd(S);
-                   if MHP >= P_ij(KillHab,KillHab);
-                      MigrantHab = find(P_ij(KillHab,:) >= MHP,1);    
-                   else
-                      MigrantHab = find(P_ji(:,KillHab) >= MHP,1);
-                   end                                                      
-                   if numel(MigrantHab)>0,%Update
-                %        MigrantInd = unidrnd(J);  
-                %        cevents = cevents + 1;
-                %        Pairs(cevents,1) = KillHab;
-                %        Pairs(cevents,2) = MigrantHab(1,1); 
-                %        R(KillHab,KillInd)=R(MigrantHab(1,1),MigrantInd);            
-                   end
+                    if MHP >= P_ij(KillHab,KillHab);
+                       MigrantHab = find(P_ij(KillHab,:) >= MHP,1);
+                    else
+                       MigrantHab = find(P_ji(:,KillHab) >= MHP,1);
+                    end                                                      
+                     
+                    if numel(MigrantHab)>0,%habitat exists
+                       if KillSp <= SR;%if death was R, then migration belongs to R
+                         
+                          %Choose randomly species from unique ID in MigrantHab
+                          UMigrant = randelement(unique(RS(MigrantHab,:)),1);
+                          
+                          %Compute list individuals from randomly chosen species
+                          MigInd = find(RS(MigrantHab,:) == UMigrant);%list inds species ID
+                          
+                          %W Dispersal=======================================================
+                          %Individual-ID from migrant can be different to the death-ID
+                          for pDm = 1:length(MigInd);
+                              WD(1,pDm) = exp(-gamma*(NDR(MigrantHab,MigInd(1,pDm)) - mu)^2);
+                              %WD(pDm,1) = Zi(1,pD) - D;%Distance to mean for visualization
+                          end
+                          %==================================================================
+                          
+                          %===REPLACEMENT====================================================================
+                          %Replace the migrant in the local habitat from individual with highest W species ID
+                          MigWDR = 1./WD;         
+                          Mig = cumsum(MigWDR);
+                          M = unifrnd(0,max(Mig));
+                          MI = find(M <= Mig);%1st in the MI list is the migrating ind
+                          %MI(1,1);Ind to replace the death ind
+                          
+                          %Replace trait value old ind with new trait value migrant for the BAD
+                          NDR(KillHab,KI(1,1)) = NDR(MigrantHab,MI(1,1));%dispersal trait
+                          NBR(KillHab,KI(1,1)) = NBR(MigrantHab,MI(1,1));%biotic trait
+                          NAR(KillHab,KI(1,1)) = NAR(MigrantHab,MI(1,1));%abiotic trait
+                          
+                          %Replace old ID with new ID migrant
+                          RS(KillHab,KI(1,1)) = RS(MigrantHab,MI(1,1));
+                          %===================================================================================
+                     
+                     
+                       else %if death was C, then migration belongs to C
+                       
+                          %Choose randomly species in MigrantHab
+                          UMigrant = randelement(unique(CS(MigrantHab,:)),1);
+                          
+                          %Calculate W dispersal trait randomly chosen species
+                          MigInd = find(CS(MigrantHab,:) == UMigrant);%list inds species ID
+                          
+                          %W Dispersal=======================================================
+                          %Individual-ID from migrant can be different to the death-ID
+                          for pDm = 1:length(MigInd);
+                              WD(1,pDm) = exp(-gamma*(NDC(MigrantHab,MigInd(1,pDm)) - mu)^2);
+                              %WD(pDm,1) = Zi(1,pD) - D;%Distance to mean for visualization
+                          end
+                          %==================================================================
+                          
+                          %===REPLACEMENT====================================================================
+                          %Replace the migrant in the local habitat from individual with highest W species ID
+                          MigWDC = 1./WD;         
+                          Mig = cumsum(MigWDC);
+                          M = unifrnd(0,max(Mig));
+                          MI = find(M <= Mig);%1st in the MI list is the migrating ind
+                          Mig(MI(1,1));%Ind to replace the death ind
+                          
+                          %Replace trait value old ind with new trait value migrant for the BAD
+                          NDC(KillHab,KI(1,1)) = NDC(MigrantHab,MI(1,1));%dispersal trait
+                          NBC(KillHab,KI(1,1)) = NBC(MigrantHab,MI(1,1));%biotic trait
+                          NAC(KillHab,KI(1,1)) = NAC(MigrantHab,MI(1,1));%abiotic trait
+                          
+                          %Replace old ID with new ID migrant
+                          CS(KillHab,KI(1,1)) = CS(MigrantHab,MI(1,1));
+                          %===================================================================================           
+                       end%belonging to R or C
+                   end%numel
                     
-                 elseif ep <= m+v,%Birth --> offspring 
-                %CHECK 3: distinction resources and consumers
+                 else %>m, we have a local birth in site KillHab --> offspring+mu(trait change) 
+                
+                     if KillSp <= SR;%if death was R, then local birth belongs to R
+                       
+                        %Choose randomly species from KillHab (local site)
+                        ULocal = randelement(unique(RS(KillHab,:)),1);
+                        
+                        %Compute list individuals from randomly chosen local species
+                        LocInd = find(RS(KillHab,:) == ULocal);%list inds species ID
+                        
+                          %W BAD locals =======================================================
+                          %Individual-ID from local birth can be different to the death-ID
+                          %W each individual to obtain probability to local birth
+                          %These BAD were calculated for the dying individual
+                          %We use only the W for all here as 
+                          BirthWBADR = (WB+WA+WD)/3;         
+                          Birth = cumsum(BirthWBADR);
+                          B = unifrnd(0,max(Birth));
+                          BI = find(B <= Birth);%1st in the BI list is the reproducing ind
+                          Birth(BI(1,1));%Ind from where to take the offspring 
+                          
+                          %====REPLACEMENT========================================================================================
+                          %Replace trait value old ind with new trait value offspring for the BAD
+                          %Check https://ch.mathworks.com/help/matlab/ref/rand.html for the rand() setup
+                          %Each trait change independently but with a different value within the range [nub nua]
+                          NDR(KillHab,KI(1,1)) = NDR(KillHab,BI(1,1)) + (nua + (nub-nua).*rand(1,1));%dispersal trait
+                          NBR(KillHab,KI(1,1)) = NBR(KillHab,BI(1,1)) + (nua + (nub-nua).*rand(1,1));%biotic trait
+                          NAR(KillHab,KI(1,1)) = NAR(KillHab,BI(1,1)) + (nua + (nub-nua).*rand(1,1));%abiotic trait
+                          
+                          %Replace old ID with new ID migrant
+                          RS(KillHab,KI(1,1)) = RS(KillHab,BI(1,1));
+                          %========================================================================================================
 
-                 BirthWBADR = (WB+WA+WD)/3;          
-                 Birth = cumsum(DieWBADR)
-                 B = unifrnd(0,max(Birth))
-                 BI = find(B <= Birth)%1st BI is the reproducing ind
-                 Birth(BI(1,1));%Ind to reproduce from 
-                 %NBR(BI(1,1));NAR(BI(1,1));NDR(BI(1,1))
-                 
-                 %W to birth
+                    else%if death was C, then local birth belongs to C
                     
-                %    newSp = newSp +1;
-                %    R(KillHab,KillInd) = newSp;
-                %else               %birth
-                %    BirthLocalInd = unidrnd(J);
-                %    while BirthLocalInd == KillInd,
-                %        BirthLocalInd = unidrnd(J);
-                %    end
-                %    R(KillHab,KillInd) = R(KillHab,BirthLocalInd);
-                 end
+                          %Choose randomly species from KillHab (local site)
+                          ULocal = randelement(unique(CS(KillHab,:)),1);
+                        
+                          %Compute list individuals from randomly chosen local species
+                          LocInd = find(CS(KillHab,:) == ULocal);%list inds species ID
+                        
+                          %W BAD locals =======================================================
+                          %Individual-ID from local birth can be different to the death-ID
+                          %W each individual to obtain probability to local birth
+                          %These BAD were calculated for the dying individual
+                          %We use only the W for all here as 
+                          BirthWBADC = (WB+WA+WD)/3;         
+                          Birth = cumsum(BirthWBADC);
+                          B = unifrnd(0,max(Birth));
+                          BI = find(B <= Birth);%1st in the BI list is the reproducing ind
+                          Birth(BI(1,1));%Ind from where to take the offspring 
+                          
+                          %====REPLACEMENT========================================================================================
+                          %Replace trait value old ind with new trait value offspring for the BAD
+                          %Check https://ch.mathworks.com/help/matlab/ref/rand.html for the rand() setup
+                          %Each trait change independently but with a different value within the range [nub nua] for both R and C
+                          NDC(KillHab,KI(1,1)) = NDC(KillHab,BI(1,1)) + (nua + (nub-nua).*rand(1,1));%dispersal trait
+                          NBC(KillHab,KI(1,1)) = NBC(KillHab,BI(1,1)) + (nua + (nub-nua).*rand(1,1));%biotic trait
+                          NAC(KillHab,KI(1,1)) = NAC(KillHab,BI(1,1)) + (nua + (nub-nua).*rand(1,1));%abiotic trait
+                          
+                          %Replace old ID with new ID migrant
+                          CS(KillHab,KI(1,1)) = CS(KillHab,BI(1,1));
+                          %========================================================================================================
+                
+                   end%close KillSp loop
+                 end%migration or local birth
               end%t
-               
+         end%MaxG
      
-     end%MaxG
-     
-%%%5. OUTPUTS=================================================================
-
-%CHECK 4 
-%---------------------------------------------------------------------------
-%Plot heat map Coevolutionary rescue in disper vs. coevol selection gradient
-%---------------------------------------------------------------------------
-            %fnam = sprintf('Sym_A%0.4f_GPT%04d.txt',As(1,ii),GPTs(1,jj));
-            %fid = fopen(fnam,'a');
-            %fprintf(fid,'%f %f %f %3f %3f\n',ri,countgen,gamma,alphaM,alphaSD);    
-            %fnam1 = sprintf('gamma%d %d %d %d %d.txt',ri,As(1,ii),A,GPT,f);
-            %fid = fopen(fnam1,'w');
-            %fprintf(fid, [repmat('% 6f ',1,size(gamma,2)), '\n'],gamma);
-            %fprintf(fid, [repmat('% 6f ',1,size(alphaM,2)), '\n'],alphaM);
-            %fprintf(fid, [repmat('% 6f ',1,size(alphaSD,2)), '\n'],alphaSD);
-            %fclose(fid);
-            %mpost = cevents/(MaxGenerations*S*J)
-            %save([fnam '_migr_events.dat'],'Pairs', 'ri', 'mpost');
-%=============================================================================                   
-            %toc
+         %%%5. OUTPUTS==========================================================================
+         %Outputs to plot heat map Coevolutionary rescue in disper vs. coevol selection gradient
+         %============Compute alpha, beta and gamma richness per replicate after================
+         
+            fid = fopen([fnamR '.csv'],'a');  %Save raw matrices...
+            fprintf(fid, [repmat('% 6f ',1,size(NBR,2)), '\n'],NBR');
+            fprintf(fid, [repmat('% 6f ',1,size(NAR,2)), '\n'],NAR');
+            fprintf(fid, [repmat('% 6f ',1,size(NDR,2)), '\n'],NDR');
+            fprintf(fid, [repmat('% 6f ',1,size(RS,2)), '\n'],RS');
+            fclose(fid);
+            
+            fid = fopen([fnamC '.csv'],'a');  %Save raw matrices...
+            fprintf(fid, [repmat('% 6f ',1,size(NBC,2)), '\n'],NBC');
+            fprintf(fid, [repmat('% 6f ',1,size(NAC,2)), '\n'],NAC');
+            fprintf(fid, [repmat('% 6f ',1,size(NDC,2)), '\n'],NDC');
+            fprintf(fid, [repmat('% 6f ',1,size(CS,2)), '\n'],CS');
+            fclose(fid);
+            
+            fid = fopen([fnamDistanceMatrix '.csv'],'a');  %Save raw matrices...
+            fprintf(fid, [repmat('% 6f ',1,size(Pdmean,2)), '\n'],Pdmean');
+            fclose(fid);  
+            
+            
+            %Open outputs to analyze these outputs in octave=============================
+            %Install dataframe within the octave promt as
+            %pkg install -forge dataframe
+            %Call it
+            %pkg load dataframe
+            %data = dataframe("name.csv")
+            %=============================================================================                   
+   %toc
    end%MaxRep
-%=======================================================================
  
