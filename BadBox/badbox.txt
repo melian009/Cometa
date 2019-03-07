@@ -1,0 +1,18 @@
+Box 1. Evaluating coevolutionary biodiversity rescue hotspots and coldspots in metacommunities.
+We implement the coevolution trait-based metacommunity model to explore how the architecture of the relationship among biotic, abiotic and dispersal traits affects the formation of hot and cold spots in biodiversity rescue in metacommunities. We explore two architectures: (a) The modular traits approach (i.e., refs outlining how to obtain the G matrix from raw data and how the modular approach emerges), and (b) The magic trait (refs outlining the history of this approach and its relationship with trait integration and asymmetry). The modular approach takes into account each trait contributing independently to fitness (Figure 1a:Modular matrix). Our magic trait model incorporates the biotic trait as the main contributor to fitness with the abiotic and dispersal traits following the biotic trait (Fig 1b:Magic matrix).  
+
+To construct our trait-based metacommunity model / to track changes in time of species frequencies (abundance? fitness?), we first We generalize the Price equation by considering the BAD traits following:
+
+equation 1,
+
+where cov(BAD) represents the covariance matrix accounting for trait-dependent differential fitness... The three trait distributions for each scenario are obtained from the covariance magic and modular matrices, see Figures 1a and 1b, respectively. The fitness function accounting for trait integration and modularity can be written as:
+
+equation 2,
+
+where the optimal values theta(B), theta(A), and theta(D) set up how far each phenotype is from the optimal type (explain the biological meaning of each optimal trait value). Alpha, beta and gamma represent the sensitivity to the biotic (i.e., the strength of coevolutionary selection), abiotic and dispersal optimal values for each phenotype. Equation 3 includes two selection types, positive and negative frequency dependent selection calculated as
+
+equation 3.
+
+
+We run our model G generations with each following the selection, mating, offspring, and dispersion scheme to produce a new generation per site. We explore a gradient of dispersal and coevolutionary selection strength to investigate the formation of hot and cold spots formation in coevolutionary metacommunities rescue ecological networks (Figure 2). Hotspots in biodiversity rescue are observed ... ?
+
