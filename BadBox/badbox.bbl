@@ -1,0 +1,21 @@
+\begin{thebibliography}{2}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{\texttt{#1}}
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{doi: #1}\else
+  \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
+
+\bibitem[Lande(1980)]{Lande:1980}
+R.~Lande.
+\newblock The genetic covariance between characters maintained by pleiotropic
+  mutations.
+\newblock \emph{Genetics}, 94:\penalty0 203--215, 1980.
+
+\bibitem[Melo and Marroig(2014)]{Melo&Marroig:2014}
+D.~Melo and G.~Marroig.
+\newblock Directional selection can drive the evolution of modularity in
+  complex traits.
+\newblock \emph{Proceedings of the National Academy of the Sciences, USA.},
+  112:\penalty0 470--475, 2014.
+
+\end{thebibliography}
