@@ -1,0 +1,28 @@
+ Julia Astegiano <juastegiano@gmail.com>
+Fri 3/29, 3:21 PMCecilia Andreazzi <ci.andreazzi@gmail.com>;Melian, Carlos
+Hola Carlos, cómo va?
+
+Cecilia and I discussed about the outline and the development of the model and we wanted to share some comments/proposals/questions with you in order to advance its first version.
+
+General comment
+First, we noticed that we need to keep in mind the whole background behind the BAD COMETA proposal. We feel that sometimes the model/box 1 is too focused in coevolutionary rescue, which is only one of the many rescue mechanisms we want to highlight in our review/framework proposal. We know that coevolutionary rescue and ecological rescue (i.e. dispersal, density-dependence) will be the focus of BOX 1, and we agree with that, but we feel the text and the heads of this section need to include all the forms of rescue we will review in the first part of the article. We will edite the text keeping this idea in mind.
+
+How to measure rescue (basic measures to send the first version of the outline)
+Following Nuismer et al. 2018 and our previous discussions about how to measure rescue, we propose that the coevolution/dispersal gradient (the heat map we want to produce) will represent different combinations of coevolutionary and ecological rescue importance in the metaecosystem. Thus, we will investigate the effects of having different coevolutionary strengths and migration probability on different response variables and under the two scenarios of trait relationships (modular and magic trait scenarios). 
+In order to consider that these mechanisms are rescue mechanisms we agreed considering biotic and abiotic selection pressures as everlasting stressors. Since the outline is based on dynamic landscapes and the idea is to predict biodiversity dynamics in the face of anthropogenic changes, we feel that this will be a first step but that we really need to incorporate simulations with stronger disturbances such as reducing the carrying capacity of the landscape or removing species. As we are working with zero-sum, we aren't sure how to do this, e.g. killing several individuals to simulate habitat loss or species extinction associated to another driver. Another option is including heterogeneity among patches by considering different abiotic optima on each one. We need to discuss about this last point. 
+Also, while thinking about the scenarios being compared we realized that we need to incorporate scenarios (1) without coevolution (just with dispersal and abiotic selection? how will this scenario function in the Magic trait scenario?); (2) without dispersal, just coevolution and abiotic selection acting.
+
+Response variables (basic measures to send the first version of the outline)
+We will look at the effects of such rescue mechanisms and trait correlation scenarios on (1) species persistence (alpha, beta and gama richness and maybe also rank-abundances curves at different spatial scales), (2) strength of interaction distribution (at local and regional spatial scales?), (3) functional diversity (based on BAD species traits; and at local and regional spatial scale?). We propose tracking these three response variables to have a general overview of the effects of rescue mechanisms (the gradients of coevolution and dispersal we will explore) on biodiversity, considering that after sending the first version of the outline and continuing working on the COMETA project other interesting measures will emerge. In the last meetings we were discussing more detailed measures of rescue; however we feel that first we need to have a more general picture of what happens with species, interactions and traits to then go more into detailed measures of the rescue process. We also feel that adding measures of functional biodiversity will help to make the connection with empirical data and with the approach that Matias proposed during the workshop (functional diversity and metacommunities). Functional diversity can be used as a proxy for ecosystem functioning.
+
+How to incorporate the network approach/rewiring in the simulations? (we don't need to have this point solved to send the first version of the outline)
+This is a questions we couldn't solve during our discussion. We wanted to think about how can we measure the level of ecological rewiring being observed in the metacommunity... We can assume that the temporal variation in the interactions strengths (like the strength of fluctuating selection) is a quantitative proxy for interaction rewiring. Then we could work with quantitative network approaches, but clearly we need to discuss this point.
+
+Let us know what do you think about these points! 
+
+Thanks in advance!
+
+Abrazos,
+
+Julia & Cecilia
+
