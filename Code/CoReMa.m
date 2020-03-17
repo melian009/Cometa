@@ -3,6 +3,7 @@
 %Coevolutionary biodiversity rescue in multitrait landscapes (alt)
 %BAD Magic scenario
 %Andreazzi, Astegiano and Melian @EAWAG FEB 2019
+%Updated @Mallorca FEB-MAR 2020
 %=================================================================
 
 %---------------------------------GOAL--------------------------------------
