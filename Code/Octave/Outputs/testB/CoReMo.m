@@ -3,6 +3,7 @@
 %Coevolutionary biodiversity rescue in multitrait landscapes (alt)
 %BAD Modular scenario
 %Andreazzi, Astegiano and Melian @EAWAG DEC 2018
+%Updated @Mallorca FEB-MAR 2020
 %=================================================================
 
 %---------------------------------GOAL--------------------------------------
@@ -11,7 +12,7 @@
 
 clear;%seed=17;rng(seed);%depending running matlab or octave
 
-MaxRep = 10;%number of replicates
+MaxRep = 100;%number of replicates
 for r = 1:MaxRep;%tic -- #replicates  
   
          %=====MIGRATION AND COEVOLUTIONARY SELECTION GRADIENT============
@@ -20,14 +21,16 @@ for r = 1:MaxRep;%tic -- #replicates
          %-----OUTPUTS--------------------------------------------------------------
          fnamR = sprintf('CoremoR_m%0.4f_gamma%04d',m,gamma);
          fnamC = sprintf('CoremoC_m%0.4f_gamma%04d',m,gamma);
+         migration = sprintf('migration_m%0.4f',m);
+         coevgamma = sprintf('gamma_gamma%04d',gamma);
          fnamDistanceMatrix = sprintf('CoremoDM_m%0.4f_gamma%04d',m,gamma);
          %==========================================================================
   
 %%%1. FIXED PARAMETERS===========================================
-  MaxG = 1000; %number of generations per replicates
+  MaxG = 100; %number of generations per replicates
   nua=0.001;%rate phenotypic change
   nub=-0.001;%rate phenotypic change
-  SR = 4;SC = 4;%Initial species in landscape
+  SR = 5;SC = 5;%Initial species in landscape
 %================================================================
   
 %%%2. SPATIAL MATRIX========================================================
@@ -37,8 +40,8 @@ for r = 1:MaxRep;%tic -- #replicates
   %a different abiotic optima across in each site.
   %=========================================================================
   
-  L=1000;%size of the landscape
-  P = 10;%number of sites 
+  L= 10;%size of the landscape 1000
+  P = 10;%number of sites 10
   n = unifrnd(0,L,P,2);%two coordinates each sites
   Pd = zeros(P,P);
   Pdmean = zeros(P,P);
@@ -408,22 +411,32 @@ end
          %============Compute alpha, beta and gamma richness per replicate after================
          
             fid = fopen([fnamR '.csv'],'a');  %Save raw matrices...
-            fprintf(fid, [repmat('% 6f ',1,size(NBR,2)), '\n'],NBR');
-            fprintf(fid, [repmat('% 6f ',1,size(NAR,2)), '\n'],NAR');
-            fprintf(fid, [repmat('% 6f ',1,size(NDR,2)), '\n'],NDR');
+            %fprintf(fid, [repmat('% 6f ',1,size(NBR,2)), '\n'],NBR');
+            %fprintf(fid, [repmat('% 6f ',1,size(NAR,2)), '\n'],NAR');
+            %fprintf(fid, [repmat('% 6f ',1,size(NDR,2)), '\n'],NDR');
             fprintf(fid, [repmat('% 6f ',1,size(RS,2)), '\n'],RS');
             fclose(fid);
             
             fid = fopen([fnamC '.csv'],'a');  %Save raw matrices...
-            fprintf(fid, [repmat('% 6f ',1,size(NBC,2)), '\n'],NBC');
-            fprintf(fid, [repmat('% 6f ',1,size(NAC,2)), '\n'],NAC');
-            fprintf(fid, [repmat('% 6f ',1,size(NDC,2)), '\n'],NDC');
+            %fprintf(fid, [repmat('% 6f ',1,size(NBC,2)), '\n'],NBC');
+            %fprintf(fid, [repmat('% 6f ',1,size(NAC,2)), '\n'],NAC');
+            %fprintf(fid, [repmat('% 6f ',1,size(NDC,2)), '\n'],NDC');
             fprintf(fid, [repmat('% 6f ',1,size(CS,2)), '\n'],CS');
             fclose(fid);
+
+            fid = fopen([migration '.csv'],'a');  %Save raw matrices...
+            fprintf(fid, [repmat('% 6f ',1,size(m,2)), '\n'],m');
+            fclose(fid);
+
+            fid = fopen([coevgamma '.csv'],'a');  %Save raw matrices...
+            fprintf(fid, [repmat('% 6f ',1,size(gamma,2)), '\n'],gamma');
+            fclose(fid);
             
-            fid = fopen([fnamDistanceMatrix '.csv'],'a');  %Save raw matrices...
-            fprintf(fid, [repmat('% 6f ',1,size(Pdmean,2)), '\n'],Pdmean');
-            fclose(fid);  
+            
+
+            %fid = fopen([fnamDistanceMatrix '.csv'],'a');  %Save raw matrices...
+            %fprintf(fid, [repmat('% 6f ',1,size(Pdmean,2)), '\n'],Pdmean');
+            %fclose(fid);  
             
             
             %Open outputs to analyze these outputs in octave=============================
