@@ -27,7 +27,7 @@ for r = 1:MaxRep;%tic -- #replicates
          %==========================================================================
   
 %%%1. FIXED PARAMETERS===========================================
-  MaxG = 1; %number of generations per replicates
+  MaxG = 100; %number of generations per replicates
   nua=0.001;%rate phenotypic change
   nub=-0.001;%rate phenotypic change
   SR = 5;SC = 5;%Initial species in landscape
@@ -40,8 +40,8 @@ for r = 1:MaxRep;%tic -- #replicates
   %a different abiotic optima across in each site.
   %=========================================================================
   
-  L= 10;%size of the landscape 1000
-  P = 2;%number of sites 10
+  L= 100;%size of the landscape 1000
+  P = 10;%number of sites 10
   n = unifrnd(0,L,P,2);%two coordinates each sites
   Pd = zeros(P,P);
   Pdmean = zeros(P,P);
@@ -113,6 +113,12 @@ for i = 1:P;%loop sites
     NAR(i,1:SR*length(Len)) = reshape(Zra.',1,[]);%abiotic trait
     NDR(i,1:SR*length(Len)) = reshape(Zrd.',1,[]);%dispersal trait
     RS(i,1:SR*length(Len)) = reshape(SBR.',1,[]);%sp. ID resource vector
+
+%size(NBR)
+%length(NAR)
+%length(NDR)
+%length(RS)
+%pause
 end
 %==============================================================================
 
@@ -209,7 +215,7 @@ end
                  %=========================================================================================
                
                  %W each individual species ID to obtain probability to die============== 
-                 %DieWBADR = length(KillInd);
+                 DieWBADR = length(KillInd);
                  DieWBADR = 1./((WB+WA+WD)/3);         
                  Kill = cumsum(DieWBADR);
                  K = unifrnd(0,max(Kill));

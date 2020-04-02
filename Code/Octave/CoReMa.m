@@ -27,7 +27,7 @@ for r = 1:MaxRep;%tic -- #replicates
          %==========================================================================
   
 %%%1. FIXED PARAMETERS===========================================
-  MaxG = 1; %number of generations per replicates
+  MaxG = 100; %number of generations per replicates
   nua=0.001;%rate phenotypic change
   nub=-0.001;%rate phenotypic change
   SR = 5;SC = 5;%Initial species in landscape
@@ -40,8 +40,8 @@ for r = 1:MaxRep;%tic -- #replicates
   %a different abiotic optima across in each site.
   %=========================================================================
   
-  L= 10;%size of the landscape 1000
-  P = 2;%number of sites 10
+  L= 100;%size of the landscape 1000
+  P = 10;%number of sites 10
   n = unifrnd(0,L,P,2);%two coordinates each sites
   Pd = zeros(P,P);
   Pdmean = zeros(P,P);
@@ -95,55 +95,59 @@ for i = 1:P;%loop sites
 %============Magic trait scenario====================================
 %generates a biotic trait first and then uses the correlation matrix
 %to sample the abiotic and the dispersal trait 
-%====================================================================     
-N = Len;%Initial population size
+%==================================================================== 
+
+%RESOURCES______________________________________________________________________
+%https://stats.stackexchange.com/questions/120179/generating-data-with-a-given-sample-covariance-matrix    
+N = size(Len);%Initial pop size
+d=3;
 Sigma = [1 0.7 0.7;0.7 1 0;0.7 0 1];%desired trait cov matrix
 
-%Option 1 -- 
-%d = 3;%#Traits
-%a = std(Zrb);
-%b = Zmr;
-%X = (a.*randn(N,d) + b) * chol(Sigma);
-%Normalization---------------------
-%X = bsxfun(@minus, X, mean(X));
-%X = X * inv(chol(cov(X)));
-%X = X * chol(Sigma);
-%cov(X);%test equal to Sigma -- notice it is function of n
-%----------------------------------
+%Test
+%X = randn(N(1,2), d) * chol(Sigma);
+%size(X);
+%cov(X);
 
-%Option 2 -- 
+%Sampling from covariance biotic for the abiotic and the dispersal 
 %Sampling biotic
-a = std(Zrb);b = Zmr;
-B = (a.*randn(N,1) + b);
-%X(:,1) = B;
+stdB = std(Zrb(j,:));meanB = Zmr;
+B = (stdB.*randn(N(1,2),1) + meanB);
+X(:,1) = B;
 
-%Sampling abiotic trait========================================================
+%Sampling abiotic trait ================================================
 Zm = round(unifrnd(45,55));%initial mean abiotic trait
 sigmaa = 10;%initial variance abiotic trait
 Zra(j,1:length(Len)) = (Zm -  ro*sigmaa) : (sigmaa / 100) : (Zm + ro*sigmaa); 
-a = std(Zra);b = Zm;
-A = (a.*randn(N,1) + b);
-%X(:,2) = A;
+stdA = std(Zra(j,:));meanA = Zm;
+A = (stdA.*randn(N(1,2),1) + meanA);
+X(:,2) = A;
 
 %Sampling dispersal trait=======================================================
 mu = mean(D);%optimum dispersal value obtained from all pairwise distance values
 sigmad = 2;%initial variance dispersal trait
 Zrd(j,1:length(Len)) = (mu -  ro*sigmad) : (sigmad / 100) : (mu + ro*sigmad); 
-a = std(Zrd);b = mu;
-Di = (a.*randn(N,1) + b);
-%X(:,3) = Di;
-%===============================================================================
+stdM = std(Zrd(j,:));meanM = mu;
+Di = (stdM.*randn(N(1,2),1) + meanM);
+X(:,3) = Di;
+%cov(X)
 
-
-%CHECK THIS COVARIANCE MATRIX
-%X = X * chol(Sigma);
-%cov(X);
 %Normalized--------------------
-%X = bsxfun(@minus, X, mean(X));
-%X = X * inv(chol(cov(X)));
-%X = X * chol(Sigma);
-%====================================================================
+X = bsxfun(@minus, X, mean(X));
+X = X * inv(chol(cov(X)));
+X = X * chol(Sigma);
+%cov(X)%Matches desired cov matrix Sigma
 
+%Transform to desired mean and std for B, A, and M
+  X(:,1) = meanB + (X(:,1) - mean(X(:,1))) * (stdB/std(X(:,1)));
+  X(:,2) = meanA + (X(:,2) - mean(X(:,2))) * (stdA/std(X(:,2)));
+  X(:,3) = meanM + (X(:,3) - mean(X(:,3))) * (stdM/std(X(:,3)));
+%cov(X)
+%pause
+Zrb(j,1:length(Len)) = X(:,1)';
+Zra(j,1:length(Len)) = X(:,2)';
+Zrd(j,1:length(Len)) = X(:,3)';
+
+%______________________________________________________________________
       
     end
     %===========Site-resource species-trait-matrix========================
@@ -161,7 +165,8 @@ Di = (a.*randn(N,1) + b);
 end
 %==============================================================================
 
-%Consumers=====================================================================
+
+%CONSUMERS=====================================================================
 for i = 1:P;%loop sites
     for j = 1:SC;%loop consumer species   
         %Sampling biotic trait=========================================================
@@ -171,39 +176,61 @@ for i = 1:P;%loop sites
         SBC(j,1:length(Len)) = SR + j;%track total number of species res + consumer
         %==============================================================================
 
- %Option 2 -- 
-%Sampling biotic
-a = std(Zcb);b = Zmc;
-B = (a.*randn(N,1) + b);
-%X(:,1) = B;
 
-%Sampling abiotic trait========================================================
+%RESOURCES______________________________________________________________________
+%https://stats.stackexchange.com/questions/120179/generating-data-with-a-given-sample-covariance-matrix    
+N = size(Len);%Initial pop size
+d=3;
+Sigma = [1 0.7 0.7;0.7 1 0;0.7 0 1];%desired trait cov matrix
+
+%Test
+%X = randn(N(1,2), d) * chol(Sigma);
+%size(X);
+%cov(X);
+
+%Sampling from covariance biotic for the abiotic and the dispersal 
+%Sampling biotic
+stdB = std(Zcb(j,:));meanB = Zmc;
+B = (stdB.*randn(N(1,2),1) + meanB);
+X(:,1) = B;
+
+%Sampling abiotic trait ================================================
 Zm = round(unifrnd(45,55));%initial mean abiotic trait
 sigmaa = 10;%initial variance abiotic trait
 Zca(j,1:length(Len)) = (Zm -  ro*sigmaa) : (sigmaa / 100) : (Zm + ro*sigmaa); 
-a = std(Zca);b = Zm;
-A = (a.*randn(N,1) + b);
-%X(:,2) = A;
+stdA = std(Zca(j,:));meanA = Zm;
+A = (stdA.*randn(N(1,2),1) + meanA);
+X(:,2) = A;
 
 %Sampling dispersal trait=======================================================
 mu = mean(D);%optimum dispersal value obtained from all pairwise distance values
 sigmad = 2;%initial variance dispersal trait
 Zcd(j,1:length(Len)) = (mu -  ro*sigmad) : (sigmad / 100) : (mu + ro*sigmad); 
-a = std(Zcd);b = mu;
-Di = (a.*randn(N,1) + b);
-%X(:,3) = Di;
-%===============================================================================
+stdM = std(Zcd(j,:));meanM = mu;
+Di = (stdM.*randn(N(1,2),1) + meanM);
+X(:,3) = Di;
+%cov(X)
 
+%Normalized--------------------
+X = bsxfun(@minus, X, mean(X));
+X = X * inv(chol(cov(X)));
+X = X * chol(Sigma);
+%cov(X)%Matches desired cov matrix Sigma
 
-%CHECK COV MATRIX
-%X = X * chol(Sigma);
-%cov(X);
-%X = bsxfun(@minus, X, mean(X));
-%X = X * inv(chol(cov(X)));
-%X = X * chol(Sigma);       
+%Transform to desired mean and std for B, A, and M
+  X(:,1) = meanB + (X(:,1) - mean(X(:,1))) * (stdB/std(X(:,1)));
+  X(:,2) = meanA + (X(:,2) - mean(X(:,2))) * (stdA/std(X(:,2)));
+  X(:,3) = meanM + (X(:,3) - mean(X(:,3))) * (stdM/std(X(:,3)));
+%cov(X)
+%pause
+Zcb(j,1:length(Len)) = X(:,1)';
+Zca(j,1:length(Len)) = X(:,2)';
+Zcd(j,1:length(Len)) = X(:,3)';
+
+%______________________________________________________________________
       
     end
-    %===========Site-consumer species-trait-matrix========================
+    %===========Site-resource species-trait-matrix========================
     %This matrix tracks all individuals per site and trait distributions.
     %Each site is at its carrying capacity
     %=====================================================================
@@ -211,10 +238,10 @@ Di = (a.*randn(N,1) + b);
     %...
     %...
     %=====================================================================
-    NBC(i,1:SC*length(Len)) = reshape(Zcb.',1,[]);%biotic trait
+    NBC(i,1:SC*length(Len)) = reshape(Zcb.',1,[]);%biotic trait 
     NAC(i,1:SC*length(Len)) = reshape(Zca.',1,[]);%abiotic trait
     NDC(i,1:SC*length(Len)) = reshape(Zcd.',1,[]);%dispersal trait
-    CS(i,1:SC*length(Len)) = reshape(SBC.',1,[]);%sp ID consumer vector
+    CS(i,1:SC*length(Len)) = reshape(SBC.',1,[]);%sp. ID resource vector
 end
 %==============================================================================
 
@@ -275,8 +302,8 @@ end
                  %=========================================================================================
                
                  %W each individual species ID to obtain probability to die============== 
-                 %DieWBADR = length(KillInd);
-                 DieWBADR = 1./(WB);         
+                 DieWBADR = length(KillInd);
+                 DieWBADR = 1./(WB+0.001);         
                  Kill = cumsum(DieWBADR);
                  K = unifrnd(0,max(Kill));
                  KI = find(K <= Kill);%1st in the KI list is the dying ind
@@ -317,7 +344,7 @@ end
                
                  %W each individual to obtain probability to die
                  DieWBADC = length(KillInd);
-                 DieWBADC = 1./(WB);        
+                 DieWBADC = 1./(WB + 0.001);        
                  Kill = cumsum(DieWBADC);
                  K = unifrnd(0,max(Kill));
                  KI = find(K <= Kill);%1st in the KI list is the dying ind
@@ -381,7 +408,7 @@ end
 %Species = SP
 %Maaa = MigInd(1,MI(1,1))
 %A = RS(KillHab,KillInd(1,KI(1,1)))
-pause
+%pause
 %________________________________
                           %==================================================================================
                      
@@ -411,8 +438,7 @@ pause
                           MI = find(M <= Mig);%1st in the MI list is the migrating ind
                           Mig(MI(1,1));%Ind to replace the death ind
                           SP = CS(MigrantHab,MigInd(1,MI(1,1)));
-                          
-                
+
 			  %Replace trait value old ind with new trait value migrant for the BAD
                           NDC(KillHab,KillInd(1,KI(1,1))) = NDC(MigrantHab,SP);%dispersal trait
                           NBC(KillHab,KillInd(1,KI(1,1))) = NBC(MigrantHab,SP);%biotic trait
@@ -472,10 +498,6 @@ pause
                  end
                  %=========================================================================================
 
-
-  
-
-
                         
                           %W BAD locals =======================================================
                           %Individual-ID from local birth can be different to the death-ID
@@ -503,9 +525,10 @@ pause
                           %Each trait change independently but with a different value within the range [nub nua]
 
                           %CHANGESAME DIRECTION ONLY BIOTIC CHANGES
-                          NDR(KillHab,KillInd(1,KI(1,1))) = NDR(KillHab,LocInd(1,BI(1,1))) + (nua + (nub-nua).*rand(1,1));%dispersal trait
-                          NBR(KillHab,KillInd(1,KI(1,1))) = NBR(KillHab,LocInd(1,BI(1,1))) + (nua + (nub-nua).*rand(1,1));%biotic trait
-                          NAR(KillHab,KillInd(1,KI(1,1))) = NAR(KillHab,LocInd(1,BI(1,1))) + (nua + (nub-nua).*rand(1,1));%abiotic trait
+                          bchanR = (nua + (nub-nua).*rand(1,1));%trait changes follow biotic direction
+                          NDR(KillHab,KillInd(1,KI(1,1))) = NDR(KillHab,LocInd(1,BI(1,1))) + bchanR;%dispersal trait
+                          NBR(KillHab,KillInd(1,KI(1,1))) = NBR(KillHab,LocInd(1,BI(1,1))) + bchanR;%biotic trait
+                          NAR(KillHab,KillInd(1,KI(1,1))) = NAR(KillHab,LocInd(1,BI(1,1))) + bchanR;%abiotic trait
                           
                           %Replace old ID with new ID migrant
                           RS(KillHab,KillInd(1,KI(1,1))) = BIRTH;
@@ -564,9 +587,10 @@ pause
                           %Each trait change independently but with a different value within the range [nub nua] for both R and C
 
                           %CHANGE SAME DIRECTION ONLY BIOTIC CHANGES 
-                          NDC(KillHab,KillInd(1,KI(1,1))) = NDC(KillHab,LocInd(1,BI(1,1))) + (nua + (nub-nua).*rand(1,1));%dispersal trait
-                          NBC(KillHab,KillInd(1,KI(1,1))) = NBC(KillHab,LocInd(1,BI(1,1))) + (nua + (nub-nua).*rand(1,1));%biotic trait
-                          NAC(KillHab,KillInd(1,KI(1,1))) = NAC(KillHab,LocInd(1,BI(1,1))) + (nua + (nub-nua).*rand(1,1));%abiotic trait
+                          bchanC = (nua + (nub-nua).*rand(1,1));%trait changes follow biotic direction
+                          NDC(KillHab,KillInd(1,KI(1,1))) = NDC(KillHab,LocInd(1,BI(1,1))) + bchanC;%dispersal trait
+                          NBC(KillHab,KillInd(1,KI(1,1))) = NBC(KillHab,LocInd(1,BI(1,1))) + bchanC;%biotic trait
+                          NAC(KillHab,KillInd(1,KI(1,1))) = NAC(KillHab,LocInd(1,BI(1,1))) + bchanC;%abiotic trait
                           
                           %Replace old ID with new ID migrant
                           CS(KillHab,KillInd(1,KI(1,1))) = BIRTH;
