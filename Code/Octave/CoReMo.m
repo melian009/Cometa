@@ -177,9 +177,13 @@ end
                  %Simultaneous resource and consumer dynamics 
                  %KillSp selects randomly a resource or consumer species ID
                  %========================================================
-                 
+                 KillInd = find(RS(KillHab,:) == KillSp);%list inds species ID                  
+
+	      if ~isempty(KillInd);
+
               if KillSp <= SR;
-                 KillInd = find(RS(KillHab,:) == KillSp);%list inds species ID
+                 
+                 %KillInd = find(RS(KillHab,:) == KillSp);%list inds species ID
                                       
                  %W===MODULAR==================================
                  %equal contribution to W each trait resources
@@ -262,6 +266,7 @@ end
                  K = unifrnd(0,max(Kill));
                  KI = find(K <= Kill);%1st in the KI list is the dying ind
                  %KI(1,1);%Ind to replace from 
+
               end       
               %==========================================================
               
@@ -289,6 +294,7 @@ end
                           
                           %Compute list individuals from randomly chosen species
                           MigInd = find(RS(MigrantHab,:) == UMigrant);%list inds species ID
+                          if ~isempty(MigInd);  
                           
                           %W Dispersal=======================================================
                           WD = zeros(1,length(MigInd));
@@ -368,7 +374,8 @@ end
 %Maaa = MigInd(1,MI(1,1))
 %A = CS(KillHab,KillInd(1,KI(1,1)))
 %pause
-                          %===================================================================================           
+                          %=================================================================================== 
+                         end%if ~isempty(MigInd);          
                        end%belonging to R or C
                    end%numel
                     
@@ -381,7 +388,8 @@ end
                         
                         %Compute list individuals from randomly chosen local species
                         LocInd = find(RS(KillHab,:) == ULocal);%list inds species ID
-
+			if ~isempty(LocInd);
+			
                      %-----------W each individual for births 
                      
                  %Fitness, W Abiotic======================================
@@ -505,9 +513,11 @@ end
                           %Replace old ID with new ID migrant
                           CS(KillHab,KillInd(1,KI(1,1))) = BIRTH;
                           %========================================================================================================
-                
+                	end%~isempty(LocInd);
                    end%close KillSp loop
                  end%migration or local birth
+
+                 end%~isempty(KillInd);
               end%t
          end%MaxG
      

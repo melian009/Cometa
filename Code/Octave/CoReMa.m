@@ -264,10 +264,15 @@ end
                  %Simultaneous resource and consumer dynamics 
                  %KillSp selects randomly a resource or consumer species ID
                  %========================================================
+                  KillInd = find(RS(KillHab,:) == KillSp);%list inds species ID
+		  %KillInd = find(CS(KillHab,:) == KillSp);%list species ID
+
+	         if ~isempty(KillInd); 
+
+                 if KillSp <= SR;
                  
-              if KillSp <= SR;
-                 KillInd = find(RS(KillHab,:) == KillSp);%list inds species ID
-                                      
+                 %KillInd = find(RS(KillHab,:) == KillSp);%list inds species ID
+                                    
                  %W===MODULAR==================================
                  %equal contribution to W each trait resources
                  %=============================================
@@ -303,13 +308,13 @@ end
                
                  %W each individual species ID to obtain probability to die============== 
                  DieWBADR = length(KillInd);
-                 DieWBADR = 1./(WB+0.001);         
+                 DieWBADR = 1./(WB+0.001);%Avoid Infty         
                  Kill = cumsum(DieWBADR);
                  K = unifrnd(0,max(Kill));
                  KI = find(K <= Kill);%1st in the KI list is the dying ind
                  %Kill(KI(1,1));%Ind to replace from                  
-              else
-                 KillInd = find(CS(KillHab,:) == KillSp);%list species ID
+                 else
+                 %KillInd = find(CS(KillHab,:) == KillSp);%list species ID
                  
                  %W===MODULAR =======================================
                  %equal contribution to W each trait consumers
@@ -349,14 +354,16 @@ end
                  K = unifrnd(0,max(Kill));
                  KI = find(K <= Kill);%1st in the KI list is the dying ind
                  %KI(1,1);%Ind to replace from 
-              end       
+
+                end %KillSp      
               %==========================================================
               
               
               %Second step trait DEMOGRAPHY: ================================
               %replace death ind by local birth or by migration
               %==============================================================
-                               
+                              
+
                  ep=unifrnd(0,1,1);%event probability to have local birth or migration
                  if ep <= m,%we have a migration event
                    
@@ -376,7 +383,8 @@ end
                           
                           %Compute list individuals from randomly chosen species
                           MigInd = find(RS(MigrantHab,:) == UMigrant);%list inds species ID
-                          
+                          if ~isempty(MigInd); 
+                             
                           %W Dispersal=======================================================
                           WD = zeros(1,length(MigInd));
                           %Individual-ID from migrant can be different to the death-ID
@@ -454,7 +462,8 @@ end
 %Maaa = MigInd(1,MI(1,1))
 %A = CS(KillHab,KillInd(1,KI(1,1)))
 %pause
-                          %===================================================================================           
+                          %===================================================================================
+                          end%~isempty(MigInd);            
                        end%belonging to R or C
                    end%numel
                     
@@ -467,8 +476,8 @@ end
                         
                         %Compute list individuals from randomly chosen local species
                         LocInd = find(RS(KillHab,:) == ULocal);%list inds species ID
-
-
+                        if ~isempty(LocInd);
+                          
 		 %-----------W each individual for births                      
                  %Fitness, W Abiotic======================================
                  %Obtain optimal abiotic mean from population at each time
@@ -595,9 +604,10 @@ end
                           %Replace old ID with new ID migrant
                           CS(KillHab,KillInd(1,KI(1,1))) = BIRTH;
                           %========================================================================================================
-                
-                   end%close KillSp loop
+                	end%~isempty(LocInd);
+                      end%close KillSp loop
                  end%migration or local birth
+	        end %~isempty(KillInd);
               end%t
          end%MaxG
      
