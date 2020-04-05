@@ -12,7 +12,7 @@
 
 clear;%seed=17;rng(seed);%depending running matlab or octave
 
-MaxRep = 1;%number of replicates
+MaxRep = 25;%number of replicates
 for r = 1:MaxRep;%tic -- #replicates  
   
          %=====MIGRATION AND COEVOLUTIONARY SELECTION GRADIENT============
@@ -27,7 +27,7 @@ for r = 1:MaxRep;%tic -- #replicates
          %==========================================================================
   
 %%%1. FIXED PARAMETERS===========================================
-  MaxG = 100; %number of generations per replicates
+  MaxG = 30; %number of generations per replicates
   nua=0.001;%rate phenotypic change
   nub=-0.001;%rate phenotypic change
   SR = 5;SC = 5;%Initial species in landscape
@@ -76,7 +76,7 @@ for r = 1:MaxRep;%tic -- #replicates
 
 %Initial Carrying capacity per site ++++++++++++++++++++++++++++++++++++++++++++++++++
 Z=round(unifrnd(6,10));%arbitrary boundary values for the trait
-sigma = 1;ro = 1;%mean & var initial trait distribution
+sigma = 0.5;ro = 0.5;%mean & var initial trait distribution
 Len = (Z -  ro*sigma) : (sigma / 100) : (Z + ro*sigma);%initial abundance each species
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
@@ -257,21 +257,19 @@ end
                  %==========TRAIT DRIVEN DEMOGRAPHY============================
                  %--------------------Death----------------------------
                  KillHab = unidrnd(P);%random selection site
-                 a = min(min(RS));%lowest species ID
-                 b = max(max(CS));%highest species ID
-                 KillSp = round(unifrnd(a,b));%random selection species ID
+                 W = cat(2, unique(RS(KillHab,:)),unique(CS(KillHab,:)));
+ 	         KillSp = randelement(W,1);%random selection species ID
                  %========================================================
                  %Simultaneous resource and consumer dynamics 
                  %KillSp selects randomly a resource or consumer species ID
                  %========================================================
-                  KillInd = find(RS(KillHab,:) == KillSp);%list inds species ID
-		  %KillInd = find(CS(KillHab,:) == KillSp);%list species ID
+                 %Change here
+                 KillIndR = find(RS(KillHab,:) == KillSp);%list inds species ID                  
+                 KillIndC = find(CS(KillHab,:) == KillSp);%list species 
 
-	         if ~isempty(KillInd); 
-
-                 if KillSp <= SR;
-                 
-                 %KillInd = find(RS(KillHab,:) == KillSp);%list inds species ID
+                 if ~isempty(KillIndR && KillIndC);
+                    if KillSp <= SR;
+                       KillInd = find(RS(KillHab,:) == KillSp);%list inds species ID
                                     
                  %W===MODULAR==================================
                  %equal contribution to W each trait resources
@@ -314,7 +312,7 @@ end
                  KI = find(K <= Kill);%1st in the KI list is the dying ind
                  %Kill(KI(1,1));%Ind to replace from                  
                  else
-                 %KillInd = find(CS(KillHab,:) == KillSp);%list species ID
+                     KillInd = find(CS(KillHab,:) == KillSp);%list species ID
                  
                  %W===MODULAR =======================================
                  %equal contribution to W each trait consumers
@@ -353,8 +351,6 @@ end
                  Kill = cumsum(DieWBADC);
                  K = unifrnd(0,max(Kill));
                  KI = find(K <= Kill);%1st in the KI list is the dying ind
-                 %KI(1,1);%Ind to replace from 
-
                 end %KillSp      
               %==========================================================
               
@@ -410,8 +406,9 @@ end
                           
                           %Replace old ID with new ID migrant
                           RS(KillHab,KillInd(1,KI(1,1))) = SP;
+                          end%~isempty(MigInd);
 
-%Test____________________________
+%Test___________________________
 %Maa = MigrantHab
 %Species = SP
 %Maaa = MigInd(1,MI(1,1))
@@ -428,7 +425,8 @@ end
                           
                           %Calculate W dispersal trait randomly chosen species
                           MigInd = find(CS(MigrantHab,:) == UMigrant);%list inds species ID
-                          
+                          if ~isempty(MigInd);
+
                           %W Dispersal=======================================================
                           %Individual-ID from migrant can be different to the death-ID
                           WD = zeros(1,length(MigInd));
@@ -456,6 +454,7 @@ end
                           %Replace old ID with new ID migrant
                           %CS(KillHab,KI(1,1)) = CS(MigrantHab,MI(1,1));
                           CS(KillHab,KillInd(1,KI(1,1))) = SP;
+                          end%~isempty(MigInd);
 
 %Maa = MigrantHab
 %Species = SP
@@ -463,7 +462,7 @@ end
 %A = CS(KillHab,KillInd(1,KI(1,1)))
 %pause
                           %===================================================================================
-                          end%~isempty(MigInd);            
+                                     
                        end%belonging to R or C
                    end%numel
                     
@@ -541,6 +540,7 @@ end
                           
                           %Replace old ID with new ID migrant
                           RS(KillHab,KillInd(1,KI(1,1))) = BIRTH;
+                          end%~isempty(LocInd);
                           %========================================================================================================
 
                     else%if death was C, then local birth belongs to C
@@ -550,6 +550,7 @@ end
                         
                           %Compute list individuals from randomly chosen local species
                           LocInd = find(CS(KillHab,:) == ULocal);%list inds species ID
+                          if ~isempty(LocInd);
 
                  %Fitness, W Abiotic===================================
                          munewC = mean(NAC(KillHab,LocInd));%Check KillInd
@@ -603,11 +604,12 @@ end
                           
                           %Replace old ID with new ID migrant
                           CS(KillHab,KillInd(1,KI(1,1))) = BIRTH;
+                          end%~isempty(LocInd);
                           %========================================================================================================
-                	end%~isempty(LocInd);
+                	
                       end%close KillSp loop
                  end%migration or local birth
-	        end %~isempty(KillInd);
+	        end %~isempty(KillIndR and C);
               end%t
          end%MaxG
      
