@@ -44,81 +44,128 @@
 
 % Text layout
 \topmargin 0.0cm
-\oddsidemargin 0.25cm
-\evensidemargin 0.25cm
+\oddsidemargin 0.2cm
+\evensidemargin 0.2cm
 \textwidth 17cm 
-\textheight 21cm
+\textheight 19cm
+
 
 \begin{document}
 
-\begin{mybox}\begin{singlespace}
-\begin{small}
-  \section*{Box 1: BAM biodiversity model}
-  We outline a model to evaluate the effect of trait architecture on
-  biodiversity. Specifically, we implement a trait-based metacommunity
-  model to explore how interactions among biotic, abiotic and
-  dispersal traits affects the formation of hot and cold spots in
-  biodiversity. We explore two architectures rooted in empirical and
-  theoretical studies (refs). The modular and the magic trait
-  architecture. The modular approach takes into account independent
-  traits suggesting each trait contributes independently to fitness
-  (Figure 1a:Modular matrix). The magic trait approach incorporates
-  the biotic trait as the main contributor to fitness with the abiotic
-  and the dispersal traits following the biotic trait (Fig 1b:Magic
-  matrix).
-  
-  Consider many resource and consumer populations characterized each
-  by individuals containing three normally distributed traits (biotic,
-  $z_b$, abiotic, $z_a$, and dispersal, $z_d$, represented as {\bf z}
-  = [$z_{b}$, $z_{a}$, $z_{d}$] for phenotype $i$). Populations are
-  located in a network of discrete sites connected by migration events
-  and the local population demography is driven by the temporal
-  dependent fitness function accounting for trait architecture
-  following
+%\begin{mybox}\begin{singlespace}
+%\begin{small}
+\section*{Box 1: BAM-trait based biodiversity model}
 
+We outline a coevolutionary IBM model to evaluate the effect of trait
+architecture (i.e., the covariation among biotic, abiotic and
+migration traits) on rescue and biodiversity dynamics (Figure 1a). We
+explore two trait architectures rooted in empirical and theoretical
+studies (Armbruster et al. 2014): the modular and the trait
+integration architectures. The modular architecture takes into account
+independent traits, i.e. each trait contributes independently to
+fitness (Figure 1b: Modular). The integration trait architecture
+incorporates the biotic trait as the main contributor to fitness with
+the abiotic and the migration traits depending on the evolution of the
+biotic trait (Fig 1b:Magic).
+
+Our model considers a landscape with a network of patches connected by
+migration events and inhabited by resource and consumer populations
+comprising several individuals each. Biotic, abiotic and migration
+trait values are initially sampled from normal distributions for each
+individual phenotype i represented as {\bf z} = [$z_{b}$, $z_{a}$,
+$z_{d}$]. The local resource demography of species $i$ is driven by
+the temporal dependent fitness function following
+\vspace{0.25 in}
+
+  \begin{equation}
+    \mathrm{W_{R}({\bf z_{B_{i}}})}^{t}_{x} = 1 / [\left 1 + exp(\left -\gamma(\mathrm{\bf z_{B_{i}}}^{t}_{x} - {\bf \hat{z}_{B_{for all j}}}^{t}_{x})^2)\right],
+  \end{equation}
+  \begin{equation}
+    \mathrm{W_{R}({\bf z_{A_{i}}})}^{t}_{x} = exp[- \gamma(\mathrm{\bf z_{A_{i}}}^{t}_{x} - \mathrm{\bf \hat{z}_{A_{i}}}^{t}_{x})^2],
+  \end{equation}
+  \begin{equation}
+      \mathrm{W_{R}({\bf z_{M_{i}}})}^{t}_{x} = exp[- \gamma(\mathrm{\bf z_{M_{i}}}^{t}_{x} - \mathrm{\bf \hat{\theta}_{D}}_{x})^2],
+    \end{equation}
+    \vspace{0.25 in}
+    
+and for the consumers, the fitness functions are the following
+
+\vspace{0.25 in}
+  \begin{equation}
+  \mathrm{W_{C}({\bf z_{B_{i}}})}^{t}_{x} = exp[\left -\gamma(\mathrm{\bf z_{B_{i}}}^{t}_{x} - {\bf z_{B_{j}}}^{t}_{x})^2 \right],
+  \end{equation}
 \begin{equation}
-  \hspace{-0.05 in} \mathrm{W({\bf z})}^{t}_{x} = exp[\left -\gamma(((\mathrm{\bf z}^{t}_{x} - \mathrm{\bf \theta}_{x})^2)^T \mathrm{\bf \omega}^{-1} (\mathrm{\bf z}^{t}_{x} - {\bf \mathrm{\bf \theta}_{x})^2)\right],\hspace{-0.15 in} 
+ \mathrm{W_{C}({\bf z_{A_{i}}})}^{t}_{x} = exp[\left - \gamma(\mathrm{\bf z_{A_{i}}}^{t}_{x} - \mathrm{\bf \theta_{A}}_{x})^2 \right],
 \end{equation}
-where $\mathrm{\bf z}^{t}_{x}$ is the vector of trait values of
+\begin{equation}
+ \mathrm{W_{C}({\bf z_{M_{i}}})}^{t}_{x} = exp[\left - \gamma(\mathrm{\bf z_{M_{i}}}^{t}_{x} - \mathrm{\bf \theta_{D}}_{x})^2 \right],
+  \end{equation}
+
+  \vspace{0.25 in}
+where $\mathrm{\bf z_{T}}^{t}_{x}$ is the trait value $T$ of
 phenotype $i$ at time $t$ and site $x$, ${\bf \theta}_{x}$ is the
 multivariate fitness optimum, ${\bf \omega}$ is the covariance matrix
 (Fig 1) \citep{Lande:1980, Melo&Marroig:2014}, and $\gamma$ determines
 the interaction sensitivity to deviations from the biotic (i.e.,
-coevolutionary selection strength), abiotic and dispersal optimum (Q1:
-W function for resources and consumers). If the covariance matrix,
-${\bf \omega}$, is diagonal, representing our modular scenario
-(Fig. 1), then there is no correlated stabilizing selection. If the
-covariance matrix is not diagonal and considering our magic scenario
-(Fig. 1), then there is correlated stabilizing selection with the
-biotic trait determining the selection on the other traits. The biotic
-optimum changes in time and we define it as the minimum and maximum
-mean trait distance across all populations in site $x$ for the
-consumer and the resource biotic trait value, respectively. The
-dispersal optimum is given by the mean distance in the landscape
-(i.e., each site has coordinates from which we calculate the Euclidian
-distance between each pair of sites). Phenotypes with dispersal trait
-value near to this optimum maximize fitness for this trait only for
-the modular but not for the magic trait scenario. The abiotic optimum
-is taken initially as the mean of the distribution and it remains the
-same during the dynamics (Q2: moving BAD optimum?)
+coevolutionary selection strength), abiotic and dispersal optimum.
 
-The time dependent fitness function in site $x$,
-$\mathrm{W({\bf z})}^{t}_{x}$, determines the mother of the
-offspring. To obtain the phenotypic value for the offspring, {\bf
-  $z_o$} = $[z_{ob}, z_{oa}, z_{od}]$, we add to each trait value of
-the mother the environmental deviation, {\bf e}, taken from a
-multivariate uniform distribution with range $\pm0.001$ in all
-dimensions (Q3: Take into account additive effects and pleiotropy
-matrix?). We run our model G generations each following the selection,
-mating and dispersion scheme to produce a new generation per site. We
-explore a gradient of dispersal and coevolutionary selection strength,
-to investigate the formation of hot and cold spots formation in local
-and regional biodiversity (Fig. 2.)
- \end{small}
-\end{singlespace}
-\end{mybox}
+In this equation, demographic and trait evolutionary dynamics depend
+on the scenario of trait architecture being considered.
 
-\newpage
+If the covariance matrix, ${\bf \omega}$, is diagonal, representing
+our modular scenario (Fig. 1), then there is no correlated stabilizing
+selection. If the covariance matrix is not diagonal and considering
+our magic scenario (Fig. 1), then there is correlated stabilizing
+selection with the biotic trait determining the selection on the other
+traits. The biotic optimum changes in time and we define it as the
+minimum and maximum mean trait distance across all populations in site
+$x$ for the consumer and the resource biotic trait value,
+respectively. The dispersal optimum is given by the mean distance in
+the landscape (i.e., each site has coordinates from which we calculate
+the Euclidian distance between each pair of sites). Phenotypes with
+dispersal trait value near to this optimum maximize fitness for this
+trait only for the modular but not for the magic trait scenario. The
+abiotic optimum is taken initially as the mean of the distribution and
+it remains the same during the dynamics.
+
+At each time step a certain percentage of individuals are selected
+randomly to die and are replaced by birth or migration. The time
+dependent fitness function in site $x$, $\mathrm{W({\bf z})}^{t}_{x}$,
+determines the mother of the offspring. To obtain the phenotypic value
+for the offspring, {\bf $z_o$} = $[z_{ob}, z_{oa}, z_{od}]$, we add to
+each trait value of the mother the environmental deviation, {\bf e},
+taken from a multivariate uniform distribution with range $\pm0.001$
+in all dimensions (i.e., independent sampled values for the modular
+but correlated for the integration trait scenario). We run our model
+for 10000 replicates with 50 generations each for the modular and
+integration trait scenarios. To evaluate the importance of coevolution
+and migration as rescue mechanisms in modulating biodiversity
+dynamics, we explore how the formation of hot and cold spots of
+species persistence in local and regional biodiversity changes in a
+gradient of migration and coevolutionary selection strength (Figure
+x2).
+
+\begin{comment}
+Mean species richness decays with the strength of coevolutionary
+selection for the biotic trait in the two scenarios, the modular
+(black) and the integrated (red) scenario (Figure 1b). Adding
+interactions among traits, the integrated scenario, decreases the
+number of species for all the gradient of coevolutionary selection,
+compared to the modular scenario.
+
+Q2: mention the initial values: number of species, population size,
+initial trait variance and covariance values, and the number of
+generations per replicate.
+\end{comment}
+
+Codes and outputs can be downloaded from
+https://github.com/melian009/Cometa).
+% \end{small}
+%\end{singlespace}
+%\end{mybox}
+
+%\newpage
+\section{Bibliography}
 \bibliographystyle{unsrtnat}
 \bibliography{space.bib}
 \end{document}

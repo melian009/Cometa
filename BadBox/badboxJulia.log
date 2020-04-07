@@ -1,10 +1,10 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2017/Debian) (preloaded format=pdflatex 2018.10.14)  7 APR 2020 18:23
+This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2017/Debian) (preloaded format=pdflatex 2018.10.14)  7 APR 2020 17:28
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
  %&-line parsing enabled.
-**\input badbox.tex
-(./badbox.tex
+**\input badboxJulia.tex
+(./badboxJulia.tex
 (/usr/share/texlive/texmf-dist/tex/latex/elsarticle/elsarticle.cls
 Document Class: elsarticle 2009/09/17, 1.2.0: Elsevier Ltd
 \@bls=\dimen102
@@ -78,7 +78,7 @@ File: upsy.fd 2001/06/04 font definitions for U/psy.
 \@enLab=\toks16
 \@sep=\skip43
 \@@sep=\skip44
- (./badbox.spl)
+ (./badboxJulia.spl)
 (/usr/share/texlive/texmf-dist/tex/latex/natbib/natbib.sty
 Package: natbib 2010/09/13 8.31b (PWD, AO)
 \bibhang=\skip45
@@ -87,7 +87,7 @@ LaTeX Info: Redefining \cite on input line 694.
 \c@NAT@ctr=\count93
 )
 \splwrite=\write3
-\openout3 = `badbox.spl'.
+\openout3 = `badboxJulia.spl'.
 
 
 (/usr/share/texlive/texmf-dist/tex/latex/geometry/geometry.sty
@@ -982,7 +982,7 @@ File: xkeyval.tex 2014/12/03 v2.7a key=value parser (HA)
 Package: url 2013/09/16  ver 3.4  Verb mode for urls, etc.
 )
 
-./badbox.tex:28: LaTeX Error: Option clash for package inputenc.
+./badboxJulia.tex:28: LaTeX Error: Option clash for package inputenc.
 
 See the LaTeX manual or LaTeX Companion for explanation.
 Type  H <return>  for immediate help.
@@ -1065,21 +1065,21 @@ File: pgfmodulematrix.code.tex 2013/09/17  (rcs-revision 1.8)
 (/usr/share/texlive/texmf-dist/tex/generic/pgf/frontendlayer/tikz/libraries/tik
 zlibrarytopaths.code.tex
 File: tikzlibrarytopaths.code.tex 2008/06/17 v3.0.1a (rcs-revision 1.2)
-))) (./badbox.aux)
-\openout1 = `badbox.aux'.
+))) (./badboxJulia.aux)
+\openout1 = `badboxJulia.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 53.
-LaTeX Font Info:    ... okay on input line 53.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 53.
-LaTeX Font Info:    ... okay on input line 53.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 53.
-LaTeX Font Info:    ... okay on input line 53.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 53.
-LaTeX Font Info:    ... okay on input line 53.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 53.
-LaTeX Font Info:    ... okay on input line 53.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 53.
-LaTeX Font Info:    ... okay on input line 53.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 52.
+LaTeX Font Info:    ... okay on input line 52.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 52.
+LaTeX Font Info:    ... okay on input line 52.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 52.
+LaTeX Font Info:    ... okay on input line 52.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 52.
+LaTeX Font Info:    ... okay on input line 52.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 52.
+LaTeX Font Info:    ... okay on input line 52.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 52.
+LaTeX Font Info:    ... okay on input line 52.
 
 (/usr/share/texlive/texmf-dist/tex/context/base/mkii/supp-pdf.mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
@@ -1161,9 +1161,9 @@ e
 * \paperwidth=597.50787pt
 * \paperheight=845.04684pt
 * \textwidth=483.69684pt
-* \textheight=540.60236pt
-* \oddsidemargin=5.69046pt
-* \evensidemargin=5.69046pt
+* \textheight=597.50787pt
+* \oddsidemargin=7.11317pt
+* \evensidemargin=7.11317pt
 * \topmargin=0.0pt
 * \headheight=50.0pt
 * \headsep=12.0pt
@@ -1184,7 +1184,7 @@ e
 
 (/usr/share/texlive/texmf-dist/tex/generic/xypic/xyps-ps.tex)
 
-Xy-pic Warning: The produced DVI file is NOT PORTABLE [badbox:53]:
+Xy-pic Warning: The produced DVI file is NOT PORTABLE [badboxJulia:52]:
  It contains <driver> `dvips' \specials for the `PostScript' extension.
 
 (/usr/share/texlive/texmf-dist/tex/generic/xypic/xyps-pro.tex)
@@ -1197,33 +1197,32 @@ Xy-pic Warning: The produced DVI file is NOT PORTABLE [badbox:53]:
 File: ucsencs.def 2011/01/21 Fixes to fontencodings LGR, T3
 )
 ABD: EveryShipout initializing macros
-LaTeX Font Info:    Try loading font information for U+msa on input line 57.
 
+./badboxJulia.tex:54: Package xcolor Error: Undefined color `grey'.
+
+See the xcolor package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.54 \begin{mybox}
+                  \begin{singlespace}
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+LaTeX Font Info:    Try loading font information for U+msa on input line 56.
 (/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
-LaTeX Font Info:    Try loading font information for U+msb on input line 57.
+LaTeX Font Info:    Try loading font information for U+msb on input line 56.
 
 (/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 )
-./badbox.tex:81: Missing delimiter (. inserted).
-<to be read again> 
-                   1
-l.81 ...}({\bf z_{B_{i}}})}^{t}_{x} = 1 / [\left 1
-                                                   + exp(\left -\gamma(\math...
-I was expecting to see something like `(' or `\{' or
-`\}' here. If you typed, e.g., `{' instead of `\{', you
-should probably delete the `{' by typing `1' now, so that
-braces don't get unbalanced. Otherwise just proceed.
-Acceptable delimiters are characters whose \delcode is
-nonnegative, or you can use `\delimiter <delimiter code>'.
-
-./badbox.tex:81: Missing delimiter (. inserted).
+./badboxJulia.tex:78: Missing delimiter (. inserted).
 <to be read again> 
                    -
-l.81 ...}}})}^{t}_{x} = 1 / [\left 1 + exp(\left -
-                                                  \gamma(\mathrm{\bf z_{B_{i...
+l.78 ... \mathrm{W({\bf z})}^{t}_{x} = exp[\left -
+                                                  \gamma(((\mathrm{\bf z}^{t...
 I was expecting to see something like `(' or `\{' or
 `\}' here. If you typed, e.g., `{' instead of `\{', you
 should probably delete the `{' by typing `1' now, so that
@@ -1231,77 +1230,24 @@ braces don't get unbalanced. Otherwise just proceed.
 Acceptable delimiters are characters whose \delcode is
 nonnegative, or you can use `\delimiter <delimiter code>'.
 
-./badbox.tex:81: Double subscript.
-l.81 ...}_{x} - {\bf \hat{z}_{B_{for all j}}}^{t}_
-                                                  {x})^2)\right],
-I treat `x_1_2' essentially like `x_1{}_2'.
-
-./badbox.tex:82: You can't use `\eqno' in math mode.
-\endmathdisplay@a ...\df@tag \@empty \else \veqno 
-                                                  \alt@tag \df@tag \fi \ifx ...
-l.82   \end{equation}
-                     
-Sorry, but I'm not programmed to handle this case;
-I'll just pretend that you didn't ask for it.
-If you're in the wrong mode, you might be able to
-return to the right one by typing `I}' or `I$' or `I\par'.
-
-./badbox.tex:82: Missing \right. inserted.
+./badboxJulia.tex:78: Missing } inserted.
 <inserted text> 
-                \right .
-l.82   \end{equation}
-                     
+                }
+l.78 ...} - {\bf \mathrm{\bf \theta}_{x})^2)\right
+                                                  ],\hspace{-0.15 in}
 I've inserted something that you may have forgotten.
 (See the <inserted text> above.)
 With luck, this will get me unwedged. But if you
 really didn't forget anything, try typing `2' now; then
 my insertion and my current dilemma will both disappear.
 
-./badbox.tex:84: Double subscript.
-l.84 ...t}_{x} - \mathrm{\bf \hat{z}_{A_{i}}}^{t}_
-                                                  {x})^2],
-I treat `x_1_2' essentially like `x_1{}_2'.
 
-./badbox.tex:87: Double subscript.
-l.87 ...}^{t}_{x} - \mathrm{\bf \hat{\theta}_{D}}_
-                                                  {x})^2],
-I treat `x_1_2' essentially like `x_1{}_2'.
+Package natbib Warning: Citation `Lande:1980' on page 1 undefined on input line
+ 83.
 
-./badbox.tex:95: Missing delimiter (. inserted).
-<to be read again> 
-                   -
-l.95 ...C}({\bf z_{B_{i}}})}^{t}_{x} = exp[\left -
-                                                  \gamma(\mathrm{\bf z_{B_{i...
-I was expecting to see something like `(' or `\{' or
-`\}' here. If you typed, e.g., `{' instead of `\{', you
-should probably delete the `{' by typing `1' now, so that
-braces don't get unbalanced. Otherwise just proceed.
-Acceptable delimiters are characters whose \delcode is
-nonnegative, or you can use `\delimiter <delimiter code>'.
 
-./badbox.tex:98: Missing delimiter (. inserted).
-<to be read again> 
-                   -
-l.98 ...C}({\bf z_{A_{i}}})}^{t}_{x} = exp[\left -
-                                                   \gamma(\mathrm{\bf z_{A_{...
-I was expecting to see something like `(' or `\{' or
-`\}' here. If you typed, e.g., `{' instead of `\{', you
-should probably delete the `{' by typing `1' now, so that
-braces don't get unbalanced. Otherwise just proceed.
-Acceptable delimiters are characters whose \delcode is
-nonnegative, or you can use `\delimiter <delimiter code>'.
-
-./badbox.tex:101: Missing delimiter (. inserted).
-<to be read again> 
-                   -
-l.101 ...}({\bf z_{M_{i}}})}^{t}_{x} = exp[\left -
-                                                   \gamma(\mathrm{\bf z_{M_{...
-I was expecting to see something like `(' or `\{' or
-`\}' here. If you typed, e.g., `{' instead of `\{', you
-should probably delete the `{' by typing `1' now, so that
-braces don't get unbalanced. Otherwise just proceed.
-Acceptable delimiters are characters whose \delcode is
-nonnegative, or you can use `\delimiter <delimiter code>'.
+Package natbib Warning: Citation `Melo&Marroig:2014' on page 1 undefined on inp
+ut line 83.
 
 [1
 Non-PDF special ignored!
@@ -1367,30 +1313,34 @@ Non-PDF special ignored!
 Non-PDF special ignored!
 Non-PDF special ignored!
 Non-PDF special ignored!{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}]
-(./badbox.bbl) [2] (./badbox.aux) ) 
+No file badboxJulia.bbl.
+
+Package natbib Warning: There were undefined citations.
+
+(./badboxJulia.aux) ) 
 Here is how much of TeX's memory you used:
- 19421 strings out of 492982
- 355337 string characters out of 6134895
- 465649 words of memory out of 5000000
- 22530 multiletter control sequences out of 15000+600000
- 11698 words of font info for 47 fonts, out of 8000000 for 9000
+ 19445 strings out of 492982
+ 356089 string characters out of 6134895
+ 465600 words of memory out of 5000000
+ 22557 multiletter control sequences out of 15000+600000
+ 11961 words of font info for 48 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 54i,5n,73p,880b,183s stack positions out of 5000i,500n,10000p,200000b,80000s
-</usr/share/texlive/texmf-dist/fonts/type1/p
-ublic/amsfonts/cm/cmbx12.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/
-amsfonts/cm/cmbx6.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfont
-s/cm/cmbx8.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cm
-ex10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi12.p
-fb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb></us
-r/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share
-/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/share/texliv
-e/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/share/texlive/texmf-
-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/texlive/texmf-dist/f
-onts/type1/public/amsfonts/cm/cmti10.pfb>
-Output written on badbox.pdf (2 pages, 123326 bytes).
+ 54i,5n,73p,885b,445s stack positions out of 5000i,500n,10000p,200000b,80000s
+</usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts
+/cm/cmbx10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cm
+bx12.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx8.pf
+b></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></us
+r/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/shar
+e/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb></usr/share/texli
+ve/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texlive/texm
+f-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/share/texlive/texmf-dist/
+fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/share/texlive/texmf-dist/fonts/ty
+pe1/public/amsfonts/cm/cmsy10.pfb></usr/share/texlive/texmf-dist/fonts/type1/pu
+blic/amsfonts/cm/cmsy8.pfb>
+Output written on badboxJulia.pdf (1 page, 105812 bytes).
 PDF statistics:
- 58 PDF objects out of 1000 (max. 8388607)
- 42 compressed objects within 1 object stream
+ 55 PDF objects out of 1000 (max. 8388607)
+ 40 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
  13 words of extra memory for PDF output out of 10000 (max. 10000000)
 
