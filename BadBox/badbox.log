@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2017/Debian) (preloaded format=pdflatex 2018.10.14)  7 APR 2020 18:23
+This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2017/Debian) (preloaded format=pdflatex 2018.10.14)  8 APR 2020 15:41
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -1209,20 +1209,8 @@ File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 )
 ./badbox.tex:81: Missing delimiter (. inserted).
 <to be read again> 
-                   1
-l.81 ...}({\bf z_{B_{i}}})}^{t}_{x} = 1 / [\left 1
-                                                   + exp(\left -\gamma(\math...
-I was expecting to see something like `(' or `\{' or
-`\}' here. If you typed, e.g., `{' instead of `\{', you
-should probably delete the `{' by typing `1' now, so that
-braces don't get unbalanced. Otherwise just proceed.
-Acceptable delimiters are characters whose \delcode is
-nonnegative, or you can use `\delimiter <delimiter code>'.
-
-./badbox.tex:81: Missing delimiter (. inserted).
-<to be read again> 
                    -
-l.81 ...}}})}^{t}_{x} = 1 / [\left 1 + exp(\left -
+l.81 ...z_{B_{i}}})}^{t}_{x} = 1 /(1 + exp(\left -
                                                   \gamma(\mathrm{\bf z_{B_{i...
 I was expecting to see something like `(' or `\{' or
 `\}' here. If you typed, e.g., `{' instead of `\{', you
@@ -1233,18 +1221,8 @@ nonnegative, or you can use `\delimiter <delimiter code>'.
 
 ./badbox.tex:81: Double subscript.
 l.81 ...}_{x} - {\bf \hat{z}_{B_{for all j}}}^{t}_
-                                                  {x})^2)\right],
+                                                  {x})^2)), \nonumber
 I treat `x_1_2' essentially like `x_1{}_2'.
-
-./badbox.tex:82: You can't use `\eqno' in math mode.
-\endmathdisplay@a ...\df@tag \@empty \else \veqno 
-                                                  \alt@tag \df@tag \fi \ifx ...
-l.82   \end{equation}
-                     
-Sorry, but I'm not programmed to handle this case;
-I'll just pretend that you didn't ask for it.
-If you're in the wrong mode, you might be able to
-return to the right one by typing `I}' or `I$' or `I\par'.
 
 ./badbox.tex:82: Missing \right. inserted.
 <inserted text> 
@@ -1259,49 +1237,28 @@ my insertion and my current dilemma will both disappear.
 
 ./badbox.tex:84: Double subscript.
 l.84 ...t}_{x} - \mathrm{\bf \hat{z}_{A_{i}}}^{t}_
-                                                  {x})^2],
+                                                  {x})^2], \nonumber
 I treat `x_1_2' essentially like `x_1{}_2'.
 
 ./badbox.tex:87: Double subscript.
 l.87 ...}^{t}_{x} - \mathrm{\bf \hat{\theta}_{D}}_
-                                                  {x})^2],
+                                                  {x})^2], \nonumber
 I treat `x_1_2' essentially like `x_1{}_2'.
 
-./badbox.tex:95: Missing delimiter (. inserted).
-<to be read again> 
-                   -
-l.95 ...C}({\bf z_{B_{i}}})}^{t}_{x} = exp[\left -
-                                                  \gamma(\mathrm{\bf z_{B_{i...
-I was expecting to see something like `(' or `\{' or
-`\}' here. If you typed, e.g., `{' instead of `\{', you
-should probably delete the `{' by typing `1' now, so that
-braces don't get unbalanced. Otherwise just proceed.
-Acceptable delimiters are characters whose \delcode is
-nonnegative, or you can use `\delimiter <delimiter code>'.
+./badbox.tex:95: Double subscript.
+l.95 ...}_{x} - {\bf \hat{z}_{B_{for all j}}}^{t}_
+                                                  {x})^2], \nonumber
+I treat `x_1_2' essentially like `x_1{}_2'.
 
-./badbox.tex:98: Missing delimiter (. inserted).
-<to be read again> 
-                   -
-l.98 ...C}({\bf z_{A_{i}}})}^{t}_{x} = exp[\left -
-                                                   \gamma(\mathrm{\bf z_{A_{...
-I was expecting to see something like `(' or `\{' or
-`\}' here. If you typed, e.g., `{' instead of `\{', you
-should probably delete the `{' by typing `1' now, so that
-braces don't get unbalanced. Otherwise just proceed.
-Acceptable delimiters are characters whose \delcode is
-nonnegative, or you can use `\delimiter <delimiter code>'.
+./badbox.tex:98: Double subscript.
+l.98 ...t}_{x} - \mathrm{\bf \hat{z}_{A_{i}}}^{t}_
+                                                  {x})^2], \nonumber
+I treat `x_1_2' essentially like `x_1{}_2'.
 
-./badbox.tex:101: Missing delimiter (. inserted).
-<to be read again> 
-                   -
-l.101 ...}({\bf z_{M_{i}}})}^{t}_{x} = exp[\left -
-                                                   \gamma(\mathrm{\bf z_{M_{...
-I was expecting to see something like `(' or `\{' or
-`\}' here. If you typed, e.g., `{' instead of `\{', you
-should probably delete the `{' by typing `1' now, so that
-braces don't get unbalanced. Otherwise just proceed.
-Acceptable delimiters are characters whose \delcode is
-nonnegative, or you can use `\delimiter <delimiter code>'.
+./badbox.tex:101: Double subscript.
+l.101 ...^{t}_{x} - \mathrm{\bf \hat{\theta}_{D}}_
+                                                  {x})^2], \nonumber
+I treat `x_1_2' essentially like `x_1{}_2'.
 
 [1
 Non-PDF special ignored!
@@ -1367,30 +1324,56 @@ Non-PDF special ignored!
 Non-PDF special ignored!
 Non-PDF special ignored!
 Non-PDF special ignored!{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}]
-(./badbox.bbl) [2] (./badbox.aux) ) 
+
+pdfTeX warning: pdflatex (file ./coremoheat.pdf): PDF inclusion: found PDF vers
+ion <1.7>, but at most version <1.5> allowed
+<coremoheat.pdf, id=17, 614.295pt x 794.97pt>
+File: coremoheat.pdf Graphic file (type pdf)
+<use coremoheat.pdf>
+Package pdftex.def Info: coremoheat.pdf  used on input line 131.
+(pdftex.def)             Requested size: 314.39998pt x 406.87283pt.
+
+
+pdfTeX warning: pdflatex (file ./coremaheat.pdf): PDF inclusion: found PDF vers
+ion <1.7>, but at most version <1.5> allowed
+<coremaheat.pdf, id=18, 614.295pt x 794.97pt>
+File: coremaheat.pdf Graphic file (type pdf)
+<use coremaheat.pdf>
+Package pdftex.def Info: coremaheat.pdf  used on input line 132.
+(pdftex.def)             Requested size: 314.39998pt x 406.87283pt.
+
+Overfull \hbox (50.14928pt too wide) in paragraph at lines 131--133
+[] []  [] 
+ []
+
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+(./badbox.bbl) [2] [3 <./coremoheat.pdf> <./coremaheat.pdf>] (./badbox.aux) ) 
 Here is how much of TeX's memory you used:
- 19421 strings out of 492982
- 355337 string characters out of 6134895
- 465649 words of memory out of 5000000
- 22530 multiletter control sequences out of 15000+600000
- 11698 words of font info for 47 fonts, out of 8000000 for 9000
+ 19436 strings out of 492982
+ 355625 string characters out of 6134895
+ 466649 words of memory out of 5000000
+ 22542 multiletter control sequences out of 15000+600000
+ 12306 words of font info for 49 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 54i,5n,73p,880b,183s stack positions out of 5000i,500n,10000p,200000b,80000s
-</usr/share/texlive/texmf-dist/fonts/type1/p
-ublic/amsfonts/cm/cmbx12.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/
-amsfonts/cm/cmbx6.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfont
-s/cm/cmbx8.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cm
-ex10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi12.p
-fb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb></us
-r/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share
-/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/share/texliv
-e/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/share/texlive/texmf-
-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/texlive/texmf-dist/f
-onts/type1/public/amsfonts/cm/cmti10.pfb>
-Output written on badbox.pdf (2 pages, 123326 bytes).
+ 54i,6n,73p,1291b,335s stack positions out of 5000i,500n,10000p,200000b,80000s
+</
+usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb></usr/sh
+are/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/share/te
+xlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx6.pfb></usr/share/texlive/t
+exmf-dist/fonts/type1/public/amsfonts/cm/cmbx8.pfb></usr/share/texlive/texmf-di
+st/fonts/type1/public/amsfonts/cm/cmmi12.pfb></usr/share/texlive/texmf-dist/fon
+ts/type1/public/amsfonts/cm/cmmi8.pfb></usr/share/texlive/texmf-dist/fonts/type
+1/public/amsfonts/cm/cmr10.pfb></usr/share/texlive/texmf-dist/fonts/type1/publi
+c/amsfonts/cm/cmr12.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfo
+nts/cm/cmr8.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/c
+msy10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmti10.
+pfb>
+Output written on badbox.pdf (3 pages, 141987 bytes).
 PDF statistics:
- 58 PDF objects out of 1000 (max. 8388607)
- 42 compressed objects within 1 object stream
+ 73 PDF objects out of 1000 (max. 8388607)
+ 52 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
- 13 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 23 words of extra memory for PDF output out of 10000 (max. 10000000)
 

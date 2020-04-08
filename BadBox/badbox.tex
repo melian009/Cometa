@@ -54,79 +54,99 @@
 
 %\begin{mybox}\begin{singlespace}
 %\begin{small}
-\section*{Box 1: BAM-trait based biodiversity model}
+\section*{Box 1: Metaecosystem multitrait-based biodiversity model}
 
-We outline a coevolutionary IBM model to evaluate the effect of trait
-architecture (i.e., the covariation among biotic, abiotic and
-migration traits) on rescue and biodiversity dynamics (Figure 1a). We
-explore two trait architectures rooted in empirical and theoretical
-studies (Armbruster et al. 2014): the modular and the trait
-integration architectures. The modular architecture takes into account
-independent traits, i.e. each trait contributes independently to
-fitness (Figure 1b: Modular). The integration trait architecture
-incorporates the biotic trait as the main contributor to fitness with
-the abiotic and the migration traits depending on the evolution of the
-biotic trait (Fig 1b:Magic).
+We outline a coevolutionary multitrait-based metaecosystem model to
+evaluate the effect of trait architecture (i.e., the covariation among
+biotic, abiotic and migration traits, the BAM traits) on biodiversity
+rescue (Figure 1). We explore two trait architectures rooted in
+empirical and theoretical studies (Armbruster et al. 2014): the
+modular and the trait integration architectures. The modular scenario
+takes into account independent traits, i.e. each trait contributes
+independently to fitness (Figure 1 left). The integration trait
+architecture incorporates the biotic trait as the main contributor to
+fitness with the abiotic and the migration traits depending on the
+evolution of the biotic trait (Fig 1, right).
 
 Our model considers a landscape with a network of patches connected by
 migration events and inhabited by resource and consumer populations
 comprising several individuals each. Biotic, abiotic and migration
 trait values are initially sampled from normal distributions for each
 individual phenotype i represented as {\bf z} = [$z_{b}$, $z_{a}$,
-$z_{d}$]. The local resource demography of species $i$ is driven by
-the temporal dependent fitness function following
-\vspace{0.25 in}
-
+$z_{m}$]. Population dynamics of resource species $i$ is driven by the
+trait- and temporal-dependent fitness functions following
+\vspace{0.25
+  in}
   \begin{equation}
-    \mathrm{W_{R}({\bf z_{B_{i}}})}^{t}_{x} = 1 / [\left 1 + exp(\left -\gamma(\mathrm{\bf z_{B_{i}}}^{t}_{x} - {\bf \hat{z}_{B_{for all j}}}^{t}_{x})^2)\right],
+    \mathrm{W_{R}({\bf z_{B_{i}}})}^{t}_{x} = 1 /(1 + exp(\left -\gamma(\mathrm{\bf z_{B_{i}}}^{t}_{x} - {\bf \hat{z}_{B_{for all j}}}^{t}_{x})^2)), \nonumber
   \end{equation}
   \begin{equation}
-    \mathrm{W_{R}({\bf z_{A_{i}}})}^{t}_{x} = exp[- \gamma(\mathrm{\bf z_{A_{i}}}^{t}_{x} - \mathrm{\bf \hat{z}_{A_{i}}}^{t}_{x})^2],
+    \mathrm{W_{R}({\bf z_{A_{i}}})}^{t}_{x} = exp[- \gamma(\mathrm{\bf z_{A_{i}}}^{t}_{x} - \mathrm{\bf \hat{z}_{A_{i}}}^{t}_{x})^2], \nonumber
   \end{equation}
   \begin{equation}
-      \mathrm{W_{R}({\bf z_{M_{i}}})}^{t}_{x} = exp[- \gamma(\mathrm{\bf z_{M_{i}}}^{t}_{x} - \mathrm{\bf \hat{\theta}_{D}}_{x})^2],
+      \mathrm{W_{R}({\bf z_{M_{i}}})}^{t}_{x} = exp[- \gamma(\mathrm{\bf z_{M_{i}}}^{t}_{x} - \mathrm{\bf \hat{\theta}_{D}}_{x})^2], \nonumber
     \end{equation}
     \vspace{0.25 in}
     
-and for the consumers, the fitness functions are the following
-
+    and for the fitness functions for the consumers are the following
+    
 \vspace{0.25 in}
   \begin{equation}
-  \mathrm{W_{C}({\bf z_{B_{i}}})}^{t}_{x} = exp[\left -\gamma(\mathrm{\bf z_{B_{i}}}^{t}_{x} - {\bf z_{B_{j}}}^{t}_{x})^2 \right],
+  \mathrm{W_{C}({\bf z_{B_{i}}})}^{t}_{x} = exp[-\gamma(\mathrm{\bf z_{B_{i}}}^{t}_{x} - {\bf \hat{z}_{B_{for all j}}}^{t}_{x})^2], \nonumber
   \end{equation}
 \begin{equation}
- \mathrm{W_{C}({\bf z_{A_{i}}})}^{t}_{x} = exp[\left - \gamma(\mathrm{\bf z_{A_{i}}}^{t}_{x} - \mathrm{\bf \theta_{A}}_{x})^2 \right],
+ \mathrm{W_{C}({\bf z_{A_{i}}})}^{t}_{x} = exp[- \gamma(\mathrm{\bf z_{A_{i}}}^{t}_{x} - \mathrm{\bf \hat{z}_{A_{i}}}^{t}_{x})^2], \nonumber
 \end{equation}
 \begin{equation}
- \mathrm{W_{C}({\bf z_{M_{i}}})}^{t}_{x} = exp[\left - \gamma(\mathrm{\bf z_{M_{i}}}^{t}_{x} - \mathrm{\bf \theta_{D}}_{x})^2 \right],
+ \mathrm{W_{C}({\bf z_{M_{i}}})}^{t}_{x} = exp[- \gamma(\mathrm{\bf z_{M_{i}}}^{t}_{x} - \mathrm{\bf \hat{\theta}_{D}}_{x})^2], \nonumber
   \end{equation}
 
-  \vspace{0.25 in}
-where $\mathrm{\bf z_{T}}^{t}_{x}$ is the trait value $T$ of
-phenotype $i$ at time $t$ and site $x$, ${\bf \theta}_{x}$ is the
-multivariate fitness optimum, ${\bf \omega}$ is the covariance matrix
-(Fig 1) \citep{Lande:1980, Melo&Marroig:2014}, and $\gamma$ determines
-the interaction sensitivity to deviations from the biotic (i.e.,
-coevolutionary selection strength), abiotic and dispersal optimum.
+  \vspace{0.25 in} where $\mathrm{\bf z_{T}}^{t}_{x}$ is the trait
+  value $T$ of phenotype $i$ at time $t$ and site $x$,
+  ${\bf \theta}_{x}$ is the multivariate fitness optimum,
+  ${\bf \omega}$ is the covariance matrix (Fig 1) \citep{Lande:1980,
+    Melo&Marroig:2014}, and $\gamma$ determines the interaction
+  sensitivity to deviations from the biotic (i.e., coevolutionary
+  selection strength), abiotic and migration optimum.
 
-In this equation, demographic and trait evolutionary dynamics depend
-on the scenario of trait architecture being considered.
+  If the covariance matrix, ${\bf \omega}$, is diagonal, representing
+  our modular scenario (Fig. 1, left), then there is no correlated
+  stabilizing selection. If the covariance matrix is not diagonal and
+  considering our magic scenario (Fig. 1, right), then there is
+  correlated stabilizing selection with the biotic trait determining
+  the selection on the other traits. The biotic optimum changes in
+  time and we define it as the minimum and maximum mean trait distance
+  across all populations in site $x$ for the consumer and the resource
+  biotic trait value, respectively (eqs. 1 and 4, respectively). The
+  dispersal optimum is given by the mean distance in the landscape
+  (i.e., each site has coordinates from which we calculate the
+  Euclidian distance between each pair of sites). Phenotypes with
+  migration trait value near to this optimum maximize fitness for this
+  trait only for the modular but not for the magic trait scenario. The
+  abiotic optimum is taken initially as the mean of the distribution
+  and it remains the same during the dynamics.
 
-If the covariance matrix, ${\bf \omega}$, is diagonal, representing
-our modular scenario (Fig. 1), then there is no correlated stabilizing
-selection. If the covariance matrix is not diagonal and considering
-our magic scenario (Fig. 1), then there is correlated stabilizing
-selection with the biotic trait determining the selection on the other
-traits. The biotic optimum changes in time and we define it as the
-minimum and maximum mean trait distance across all populations in site
-$x$ for the consumer and the resource biotic trait value,
-respectively. The dispersal optimum is given by the mean distance in
-the landscape (i.e., each site has coordinates from which we calculate
-the Euclidian distance between each pair of sites). Phenotypes with
-dispersal trait value near to this optimum maximize fitness for this
-trait only for the modular but not for the magic trait scenario. The
-abiotic optimum is taken initially as the mean of the distribution and
-it remains the same during the dynamics.
+  \begin{center}
+  \begin{figure}[h!]
+  \hspace{-0.75 in}\includegraphics[width=0.65\textwidth]{coremoheat.pdf}
+  \hspace{-0.6 in}\includegraphics[width=0.65\textwidth]{coremaheat.pdf}
+
+  \vspace{-0.8 in}
+  \caption{\small {\bf Modular (left) and Magic (right) scenarios}: To
+    evaluate the importance of coevolutionary selection and migration
+    as rescue mechanisms in modulating biodiversity dynamics, we
+    explore the formation of hot and cold spots of species persistence
+    in the landscape along a gradient of migration and coevolutionary
+    selection strength. {\bf Left}. The modular scenario predicts
+    higher rescue than the magic scenario across the whole phase space
+    with hot spots occurring for low-to-medium migration and
+    medium-to-high coevolutionary selection. {\bf Right}: The magic
+    scenario predicts generally low-to-moderate- rescue. The highest
+    rescue values are in the low coevolutionary selection range along
+    a broad range of migration.}
+\end{figure}
+\end{center}
+\vspace{-0.25 in}
 
 At each time step a certain percentage of individuals are selected
 randomly to die and are replaced by birth or migration. The time
@@ -137,13 +157,14 @@ each trait value of the mother the environmental deviation, {\bf e},
 taken from a multivariate uniform distribution with range $\pm0.001$
 in all dimensions (i.e., independent sampled values for the modular
 but correlated for the integration trait scenario). We run our model
-for 10000 replicates with 50 generations each for the modular and
-integration trait scenarios. To evaluate the importance of coevolution
-and migration as rescue mechanisms in modulating biodiversity
-dynamics, we explore how the formation of hot and cold spots of
-species persistence in local and regional biodiversity changes in a
-gradient of migration and coevolutionary selection strength (Figure
-x2).
+for 100 replicates with 50 generations each for the modular and
+integration scenarios. To evaluate the importance of coevolution and
+migration as rescue mechanisms in modulating biodiversity dynamics, we
+explore how the formation of hot and cold spots of species persistence
+in local and regional biodiversity changes in a gradient of migration
+and coevolutionary selection strength. Codes and outputs can be
+downloaded from https://github.com/melian009/Cometa).
+
 
 \begin{comment}
 Mean species richness decays with the strength of coevolutionary
@@ -158,8 +179,6 @@ initial trait variance and covariance values, and the number of
 generations per replicate.
 \end{comment}
 
-Codes and outputs can be downloaded from
-https://github.com/melian009/Cometa).
 % \end{small}
 %\end{singlespace}
 %\end{mybox}
