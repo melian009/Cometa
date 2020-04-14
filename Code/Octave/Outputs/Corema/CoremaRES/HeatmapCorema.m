@@ -15,8 +15,28 @@ files = dir('*.csv');
 num_files = length(files);
 #results = cell(length(files), 1);
 for i = 1:num_files
+
     #results{i} = dlmread(files(i).name)
-    files(i).name
+    #A = (files(i).name)
+
+    IDX = strfind(files(i).name, "m0");
+    templateM = 'm0';
+    templateG = 'gamma';
+
+#https://ch.mathworks.com/matlabcentral/answers/384583-how-to-extract-substring-from-string
+indexmig1 = strfind(files(i).name, templateM) + length(templateM) - 1;
+indexmig2 = strfind(files(i).name, '_g');
+middleStringM = files(i).name(indexmig1:indexmig2-1);
+#trim off any spaces if desired
+#middleStringMig = strtrim(middleStringM)
+
+indexgam1 = strfind(files(i).name, templateG) + length(templateG) - 1;
+indexgam2 = strfind(files(i).name, '.c');
+middleStringG = files(i).name(indexgam1+1:indexgam2-1);
+#trim off any spaces if desired
+#middleStringGam = strtrim(middleStringG)
+#-------------------------------------------------------------------------------------------
+
     Di = dlmread(files(i).name);
     U = unique(Di);
     for j = 1:10;#sites
@@ -36,14 +56,14 @@ for i = 1:num_files
         #DIVS(j,1) = sum(DIVK);#Diversity
         DIVS(j,1) = length(S);#Richness
     end  
-DIVG(i,1) = sum(DIVS);
+DIVG(i,3) = sum(DIVS);#diversity :: 3rd column
+DIVG(i,1) = str2double(middleStringM);#migration :: 1st column
+DIVG(i,2) = str2double(middleStringG);#gamma :: 2nd column
 #pause
-#migration :: 1st column
-#gamma :: 2nd column
-#diversity :: 3rd column
+
 end
 
-save rescuecorema.txt DIVG
+save rescuecoremaAU.txt DIVG
 
 
    #U = unique(csv);
