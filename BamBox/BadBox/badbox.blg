@@ -1,0 +1,65 @@
+This is BibTeX, Version 0.99d (TeX Live 2017/Debian)
+Capacity: max_strings=100000, hash_size=100000, hash_prime=85009
+The top-level auxiliary file: badbox.aux
+The style file: unsrtnat.bst
+Database file #1: space.bib.bib
+You're missing a field part---line 203 of file space.bib.bib
+ :   volume = 
+ :            ,
+I'm skipping whatever remains of this entry
+You're missing a field part---line 1120 of file space.bib.bib
+ :   volume = 
+ :            ,
+I'm skipping whatever remains of this entry
+I was expecting a `,' or a `}'---line 2149 of file space.bib.bib
+ :   publisher = Oxford 
+ :                      University Press. Oxford, pp. 27–86,
+I'm skipping whatever remains of this entry
+Name 1 in "Melo, D., and Marroig, G." has a comma at the end for entry Melo&Marroig:2014
+while executing---line 1233 of file unsrtnat.bst
+Name 1 in "Melo, D., and Marroig, G." has a comma at the end for entry Melo&Marroig:2014
+while executing---line 1315 of file unsrtnat.bst
+Name 1 in "Melo, D., and Marroig, G." has a comma at the end for entry Melo&Marroig:2014
+while executing---line 1315 of file unsrtnat.bst
+You've used 4 entries,
+            2481 wiz_defined-function locations,
+            588 strings with 5316 characters,
+and the built_in function-call counts, 1554 in all, are:
+= -- 148
+> -- 44
+< -- 4
++ -- 20
+- -- 12
+* -- 116
+:= -- 249
+add.period$ -- 18
+call.type$ -- 4
+change.case$ -- 8
+chr.to.int$ -- 4
+cite$ -- 4
+duplicate$ -- 76
+empty$ -- 151
+format.name$ -- 20
+if$ -- 335
+int.to.chr$ -- 1
+int.to.str$ -- 5
+missing$ -- 4
+newline$ -- 34
+num.names$ -- 12
+pop$ -- 22
+preamble$ -- 1
+purify$ -- 4
+quote$ -- 0
+skip$ -- 46
+stack$ -- 0
+substring$ -- 92
+swap$ -- 9
+text.length$ -- 0
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 28
+warning$ -- 0
+while$ -- 12
+width$ -- 0
+write$ -- 71
+(There were 6 error messages)
