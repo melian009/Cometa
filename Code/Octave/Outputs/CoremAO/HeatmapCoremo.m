@@ -47,7 +47,7 @@ middleStringG = files(i).name(indexgam1+1:indexgam2-1);
             D = find(Di(j,:) == U(k,1));    
             DIV = length(D)/(length(Di(j,:)));#* log(length(D)/length(Di(j,:)));
             DIVK(k,1) = DIV;
-            if DIVK(k,1) <= 0.15;
+            if DIVK(k,1) <= 0.10;
                R = find(S(1,:) == U(k,1));
                S(R) = [];
             end
@@ -100,7 +100,7 @@ middleStringG = files(i).name(indexgam1+1:indexgam2-1);
             D = find(Di(j,:) == U(k,1));    
             DIV = length(D)/(length(Di(j,:)));#* log(length(D)/length(Di(j,:)));
             DIVK(k,1) = DIV;
-            if DIVK(k,1) <= 0.15;
+            if DIVK(k,1) <= 0.10;
                R = find(S(1,:) == U(k,1));
                S(R) = [];
             end

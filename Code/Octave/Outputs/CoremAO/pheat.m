@@ -26,12 +26,21 @@ no=length(xo);
 #Resources + Consumers Coremo====================================================
 [X, Y] = meshgrid(linspace(min(xo),max(xo),no), linspace(min(yo),max(yo),no));
 Z = griddata(xo,yo,zo,X,Y);
+
+#colorMap = jet(128);
+#colormap(colorMap);   % Apply the colormap
+#colorbar;
+
 colormap(jet)
+
 subplot(2,2,1)
 #cm = jet(100);cm(1:end,:)=[];colormap(cm)
 imagesc (X, Y, Z)
+
+
 axis([min(xo)+0.12 max(xo)-0.12 min(yo)+0.15 max(yo)-0.15])
 c2 = caxis;
+#c2 = [0.86, 0.9];
 
 xlabel('Migration','fontsize',12)
 ylabel('Gamma','fontsize',12)
@@ -70,11 +79,14 @@ subplot(2,2,2)
 
 #cma = jet(100);cma(end-20:end,:)=[];colormap(cma)
 imagesc (X, Y, Z)
+
 axis([min(xa)+0.12 max(xa)-0.12 min(ya)+0.15 max(ya)-0.15])
 
 c1 = caxis;
 c3 = [min([c1 c2]), max([c1 c2])];
+#c3 = [0.86,0.9];
 caxis(c3)
+#pause
 
 xlabel('Migration','fontsize',12)
 ylabel('Gamma','fontsize',12)
@@ -110,7 +122,7 @@ colorbar('off')
 #colormap(jet)
 #imagesc (X, Y, Z)
 
-print -color -F:12 Heatmap.pdf
+#print -color -F:12 Heatmap.pdf
 
 
 
