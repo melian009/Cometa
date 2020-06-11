@@ -1,5 +1,6 @@
 
-
+using Distributed
+@everywhere begin
 using EvoDynamics
 using Agents
 using Distributions
@@ -64,7 +65,7 @@ function nspecies_per_node(model)
   end
   return Tuple(output)
 end
-
+end
 agentdata, modeldata, model = runmodel(parameters, mdata=[nspecies_per_node], replicates=100, parallel=true);
 CSV.write("data.csv", modeldata)
 save("model.jld2", "model", model)
