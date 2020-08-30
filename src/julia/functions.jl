@@ -23,3 +23,24 @@ function shannonIndex(csvfile; nspecies=10)
   end
   return generations
 end
+
+"""
+Reads all `csv` files in `directory`, calculates `shannonIndex` for each one of them, and takes the values in row `gen`, and puts them all in a matrix, and returns the matrix.
+"""
+function shannonIndexDir(directory, gen=101; nsites=10, nspecies=10)
+  outmat = Array{Float64, 2}(undef, 0, 0)
+  first = true
+  for ff in readdir(directory, join=true)
+    if endswith(ff, ".csv")
+      si = shannonIndex(ff, nspecies=nspecies)
+      row = si[gen, :]
+      if first
+        first = false
+        outmat = row
+      else
+        outmat = hcat(outmat, row)
+      end
+    end
+  end
+  return outmat
+end
