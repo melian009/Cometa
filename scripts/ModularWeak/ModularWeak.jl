@@ -18,7 +18,7 @@ function nspecies_per_node(model)
   return Tuple(output)
 end
 
-for rep in 1:100
+for rep in 1:1000
   nspecies = 10
   nphenotypes = fill(3, nspecies)
   ngenes = fill(3, nspecies)
@@ -60,7 +60,7 @@ for rep in 1:100
     :K => Dict(i => fill(1000, nspecies) for i in 1:nspecies),
     :migration_rates => [mig for i in 1:nspecies],
     :E => Tuple(0.001 for i in 1:nspecies),
-    :generations => 100,
+    :generations => 1000,
     :space => (5,2),
   );
   
