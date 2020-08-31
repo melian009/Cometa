@@ -97,7 +97,7 @@ dfall = DataFrame(
   [:speciesCount, :regime]
 )
 
-## 2.2 Boxplots
+## 3.2 Boxplots
 
 p = @vlplot(
   data = dfall,
@@ -117,5 +117,5 @@ p = @vlplot(
   }
 )
 VegaLite.save(plotsdir("global_species_count.pdf"), p)
-### End 2 ###
+### End 3 ###
 #############
