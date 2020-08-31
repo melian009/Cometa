@@ -44,3 +44,23 @@ function shannonIndexDir(directory, gen=101; nsites=10, nspecies=10)
   end
   return outmat
 end
+
+"Returns the global number of species"
+function totalSpeciesNum(csvfile; generation=101, nsites=10, nspecies=10)
+  df = CSV.read(csvfile, DataFrame)
+  row = reshape(Array(df[generation, 2:end]), nsites, nspecies)
+  species_count = sum(row, dims=1)
+  n = count(x-> x>0, species_count)
+end
+
+function totalSpeciesNumDir(directory; generation=101, nsites=10, nspecies=10)
+  outmat = Int[]
+  first = true
+  for ff in readdir(directory, join=true)
+    if endswith(ff, ".csv")
+      si = totalSpeciesNum(ff, generation=generation, nsites=nsites, nspecies=nspecies)
+      push!(outmat, si)
+    end
+  end
+  return outmat
+end

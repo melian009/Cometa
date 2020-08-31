@@ -74,3 +74,48 @@ p = @vlplot(
 VegaLite.save(plotsdir("shannonIndex_regime_gen101.pdf"), p)
 ### End 2 ###
 #############
+
+### 3. Species freq. of all files within each simulation regime at generation 100.
+####################################################################
+
+magicStrongGen101 = totalSpeciesNumDir(magicStrong; generation=101, nsites=10, nspecies=10)
+magicWeakGen101 =  totalSpeciesNumDir(magicWeak; generation=101, nsites=10, nspecies=10)
+modularStrongGen101 = totalSpeciesNumDir(modularStrong; generation=101, nsites=10, nspecies=10)
+modularWeakGen101 = totalSpeciesNumDir(modularWeak; generation=101, nsites=10, nspecies=10)
+
+# Put all in a dataframe
+dfall = DataFrame(
+  hcat(
+    vcat(
+      vec(magicStrongGen101),
+      vec(magicWeakGen101),
+      vec(modularStrongGen101),
+      vec(modularWeakGen101),
+    ),
+    repeat(["Magic Strong","Magic Weak", "Modular Strong", "Modular Weak"], inner=100)
+  ),
+  [:speciesCount, :regime]
+)
+
+## 2.2 Boxplots
+
+p = @vlplot(
+  data = dfall,
+  mark = {type=:boxplot},
+  y = {
+    field = "speciesCount",
+    type = "quantitative",
+    axis = {
+      title = "Total number of species"
+    }
+  },
+  x = {
+    "regime:n",
+    axis = {
+      title = nothing
+    }
+  }
+)
+VegaLite.save(plotsdir("global_species_count.pdf"), p)
+### End 2 ###
+#############
