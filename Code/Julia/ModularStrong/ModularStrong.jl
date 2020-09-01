@@ -38,7 +38,7 @@ for index in 1:length(A)
   end
 end
 
-Ω = Tuple([rand(Normal(0, 0.01), i[1], i[2]) for i in zip(P, P)])
+Ω = Tuple([rand(Normal(0, 3), i[1], i[2]) for i in zip(P, P)])
 for index in 1:length(Ω)
   for diag in 1:size(Ω[index], 1)
     Ω[index][diag, diag] = 1.0
@@ -67,7 +67,7 @@ parameters = Dict(
   :K => Dict(i => fill(1000, nspecies) for i in 1:nspecies),
   :migration_rates => [mig for i in 1:nspecies],
   :E => Tuple(0.001 for i in 1:nspecies),
-  :generations => 5,
+  :generations => 100,
   :space => (5,2),
 )
 

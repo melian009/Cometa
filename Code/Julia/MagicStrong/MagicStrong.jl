@@ -64,7 +64,7 @@ parameters = Dict(
   :K => Dict(i => fill(1000, nspecies) for i in 1:nspecies),
   :migration_rates => [mig for i in 1:nspecies],
   :E => Tuple(0.001 for i in 1:nspecies),
-  :generations => 5,
+  :generations => 100,
   :space => (5,2),
 )
 
