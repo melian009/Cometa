@@ -68,6 +68,6 @@ for rep in 1:1000
   );
 
   agentdata, modeldata, model = runmodel(parameters, mdata=[nspecies_per_node])
-  CSV.write("data_$rep.csv", data)
+  CSV.write("data_$rep.csv", modeldata)
   save("modelparameters_$rep.jld2", "parameters", parameters)
 end
