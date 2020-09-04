@@ -1,0 +1,236 @@
+\documentclass[authoryear,1p,12pt]{elsarticle}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage[mathlines,displaymath]{lineno}
+\usepackage{graphicx}
+\usepackage[all,2cell,dvips]{xy}
+\usepackage{natbib}
+\usepackage[usenames,rgb]{xcolor} 
+\usepackage{ucs}                                            
+\usepackage[utf8]{inputenc}                                                                           
+\usepackage{array}                                            
+\usepackage{longtable}                                        
+\usepackage{calc}                                             
+\usepackage{multirow}                                         
+\usepackage{hhline}                                           
+\usepackage{ifthen} 
+% \usepackage{babel}
+\usepackage{tcolorbox}
+\newtcolorbox{mybox}{colback=grey!5!white,colframe=red!75!black}
+\usepackage{setspace}
+\usepackage{verbatim}
+\usepackage{etaremune}
+\usepackage{url}
+\usepackage{color}
+\usepackage{graphicx}
+\usepackage{natbib}
+\usepackage[latin1]{inputenc}
+\usepackage{color}
+\usepackage{array}
+\usepackage{float}
+\usepackage{wrapfig}
+
+\newcommand{\etal}{{et~al.{}}}
+\newcommand{\ie}{{i.~e.{}}}
+\newcommand{\eg}{{e.~g.{}}}
+\newcommand{\viz}{{viz.{}}}
+\newcommand{\etc}{{etc.{}}}
+\newcommand{\apriori}{{a priori{}}}
+\newcommand{\vv}{{vice versa{}}}
+\newcommand{\cf}{cf.{}}
+\setcounter{tocdepth}{3}
+\usepackage{tikz}
+\newcommand{\carlos}[1]{\textcolor{Red}{#1}}
+
+% Text layout
+\topmargin 0.0cm
+\oddsidemargin 0.2cm
+\evensidemargin 0.2cm
+\textwidth 16cm 
+\textheight 20.5cm
+
+
+\begin{document}
+
+%\begin{mybox}\begin{singlespace}
+%\begin{small}
+\section*{Box 1: Metaecosystem multitrait biodiversity model}
+
+We outline a multitrait-based model to evaluate the effect of trait
+architecture, i.e., the covariation among biotic, abiotic and
+migration traits on biodiversity rescue (Figure 1). We explore two
+trait architectures rooted in empirical and theoretical studies: the
+modular and the magic trait integration architecture
+\citep{ENDLER199522,Armbrusteretal2018}. The modular scenario takes
+into account independent traits, i.e. each trait contributes
+independently to fitness (Figure 1, Modular). The magic trait
+architecture incorporates the biotic trait as the main contributor to
+fitness with the abiotic and the migration traits depending on the
+evolution of the biotic trait (Fig 1, Magic).
+
+Our model considers a landscape with a network of patches connected by
+migration events and inhabited by resource and consumer populations
+comprising several individuals each. Biotic, abiotic and migration
+trait values are initially sampled from normal distributions each with
+mean and variance for each trait given by
+$\mathcal{N}(\mu_{b},\sigma_{b}^2)$,
+$\mathcal{N}(\mu_{a},\sigma_{a}^2)$, and
+$\mathcal{N}(\mu_{m},\sigma_{m}^2)$, for the biotic, abiotic, and
+migration trait, respectively. Population dynamics of resource species
+$i$ is driven by the trait- and temporal-dependent fitness functions
+following \vspace{0.25 in}
+  \begin{equation}
+    \hspace{0.9 in} \mathcal{W}_{R}({\bf z_{B_{i}}})^{t}_{x} = 1 /(1 + exp(\left -\gamma(\mathrm{\bf z_{B_{i}}}^{t}_{x} - {\bf \hat{z}_{B_{for all_{j}}}}^{t}_{x})^2)), \nonumber
+  \end{equation}
+  \begin{equation}
+    \mathcal{W}_{R}({\bf z_{A_{i}}})^{t}_{x} = exp[- \gamma(\mathrm{\bf z_{A_{i}}}^{t}_{x} - \mathrm{\bf \hat{z}_{A_{i}}}_{x})^2], %\nonumber
+  \end{equation}
+  \begin{equation}
+    \mathcal{W}_{R}({\bf z_{M_{i}}})^{t}_{x} = exp[- \gamma(\mathrm{\bf z_{M_{i}}}^{t}_{x} - \mathrm{\bf \hat{\theta}_{D}}_{x})^2]. \nonumber
+    \end{equation}
+    \vspace{0.25 in}
+    
+    Similarly, the population dynamics for the consumer species is
+    given by
+    
+\vspace{0.25 in}
+  \begin{equation}
+   \hspace{0.25 in} \mathcal{W}_{C}({\bf z_{B_{i}}})^{t}_{x} = exp[-\gamma(\mathrm{\bf z_{B_{i}}}^{t}_{x} - {\bf \hat{z}_{B_{for all_{j}}}}^{t}_{x})^2], \nonumber
+  \end{equation}
+\begin{equation}
+  \mathcal{W}_{C}({\bf z_{A_{i}}})^{t}_{x} = exp[- \gamma(\mathrm{\bf z_{A_{i}}}^{t}_{x} - \mathrm{\bf \hat{z}_{A_{i}}}_{x})^2], %\nonumber
+\end{equation}
+\begin{equation}
+  \mathcal{W}_{C}({\bf z_{M_{i}}})^{t}_{x} = exp[- \gamma(\mathrm{\bf z_{M_{i}}}^{t}_{x} - \mathrm{\bf \hat{\theta}_{D}}_{x})^2], \nonumber
+  \end{equation}
+
+  \vspace{0.25 in} where $\mathrm{\bf z_{B_{i}}}^{t}_{x}$,
+  $\mathrm{\bf z_{A_{i}}}^{t}_{x}$, and
+  $\mathrm{\bf z_{M_{i}}}^{t}_{x}$ represent the biotic, abiotic, and
+  migration trait value of phenotype $i$ at time $t$ and site $x$ for
+  resources and consumer species, $R$ and $C$, respectively. Equation
+  1 can be compactly written for resources as
+  
+  % Resources
+  \begin{center}
+\begin{equation}
+  \hspace{0.05 in}\mathcal{W}_{R}({\bf z_{BAM_{i}}})^{t}_{x} = \mathcal{E}[-\gamma([{\bf z_{\alpha_{i}}}^{t}_{x} - {\bf \theta^{*}}_{x}]^T} {\bf \Omega_{BAM}}^{-1} [{\bf z_{\alpha_{i}}}^{t}_{x} - {\bf \theta^{*}}_{x}]})], \hspace{1 in}
+\end{equation}
+\end{center}
+\vspace{0.25 in}
+and for consumers as
+  \begin{center}
+\begin{equation}
+  \hspace{0.05 in}\mathcal{W}_{C}({\bf z_{BAM_{i}}})^{t}_{x} = exp[-\gamma([{\bf z_{\alpha_{i}}}^{t}_{x} - {\bf \theta^{*}}_{x}]^T} {\bf \Omega_{BAM}}^{-1} [{\bf z_{\alpha_{i}}}^{t}_{x} - {\bf \theta^{*}}_{x}]})], \hspace{1 in}
+\end{equation}
+\end{center}
+\vspace{0.2 in} where $\mathcal{E}$ in the resources equation
+represents the fact that the biotic trait value increases its fitness
+the more it deviates from the mean and common predator type (i.e.,
+negative-frequency dependent selection, equation 1).
+${\bf \theta^{*}}_{x}$ is the multivariate fitness optimum for the
+biotic, abiotic and migration trait in site $x$, with the asterisk
+referring to being time-dependent in the biotic, but not in the
+abiotic and migration traits. ${\bf \Omega}$ is the covariance matrix
+\citep{Lande:1980, Melo&Marroig:2014}, and $\gamma$ determines the
+interaction sensitivity to deviations from the biotic, abiotic and
+migration optimum. The interpretation of $\gamma$ is as follows: it
+represents the strength of coevolutionary selection between resource
+and consumer traits (i.e., $\gamma$, y-axis in Figure 1), stabilizing
+environmental selection and stabilizing migration selection for the
+biotic, abiotic and migration traits, respectively.
+
+If the covariance matrix, ${\bf \Omega}$, is diagonal, representing
+our modular scenario (Fig. 1, left), then there is no correlated
+stabilizing selection (i.e., Modular scenario was run with
+off-diagonal values equal to zero, ${\bf \Omega}$ = [1 0 0;0 1 0;0 0
+1];). If the covariance matrix is not diagonal, our magic scenario
+(Fig. 1, right), then there is correlated stabilizing selection with
+the biotic trait determining the selection on the other traits (i.e.,
+Magic scenario was run with the following covariance matrix,
+${\bf \Omega}$ = [1 0.7 0.7;0.7 1 0;0.7 0 1]). The biotic optimum is
+time-dependent and we define it as the maximum and minimum mean trait
+distance across all populations in site $x$ for the resource and
+consumer biotic trait value, respectively (Biotic trait, equation 1
+and 2). Migration optimum is given by the mean distance in the
+landscape (i.e., each site has coordinates from which we calculate the
+Euclidian distance between each pair of sites). Phenotypes with
+migration trait value near to this optimum maximize fitness for this
+trait only for the modular but not for the magic trait scenario. The
+ecology underpinning this migration optimum takes into account that
+non migrating or migrating excesively is more risky than the optimal
+migration. The abiotic optimum is taken initially as the mean of the
+distribution for each species and it remains the same during the
+dynamics.
+  \begin{center}
+  \begin{figure}[h!]
+   \hspace{-0.15 in}\includegraphics[width=1.05\textwidth]{Heatmap.pdf}
+  \vspace{0.1 in}
+  \caption{\small {\bf Effect of modular and magic trait architecture
+      on biodiversity rescue}: We evaluate the importance of
+    coevolutionary selection and migration as biodiversity rescue
+    mechanisms in a Modular (left) and Magic (right), trait
+    architecture scenarios. We explore the formation of hot and cold
+    spots of species persistence in the landscape along a gradient of
+    migration and coevolutionary selection strength. The modular
+    scenario predicts higher biodiversity rescue than the magic one
+    along the migration and coevolutionary selection gradient. Hot
+    spots in biodiversity rescue occur for low-to-medium migration and
+    medium-to-high coevolutionary selection values. The magic scenario
+    predicts a highly homogeneous biodiversity rescue along the
+    gradients}
+\end{figure}
+\end{center}
+\vspace{-0.5 in} Population dynamics run as follows: at each time step
+the time-dependent fitness function in site $x$, for resource species
+$i$, $\mathcal{W}_{R}({\bf z_{BAM_{i}}})}^{t}_{x}$, and consumer
+species $j$, $\mathcal{W}_{C}({\bf z_{BAM_{j}}})}^{t}_{x}$, determines
+the probabilities to die. Individuals that die are replaced by
+offspring from the same site $x$ or from migration with probability
+${\bf m}$. Offspring's phenotypes, {\bf $z_o$} =
+$[z_{ob}, z_{oa}, z_{om}]$, are inherited from the mother plus an
+environmental deviation, {\bf e}, taken from a multivariate uniform
+distribution with range $\pm0.001$ in all dimensions (i.e., these
+values are independently sampled for the modular but correlated
+following the input covariance matrix for the magic trait
+scenario). We run our model for 500 replicates each for 50 generations
+for the two scenarios. To evaluate the importance of coevolution and
+migration as biodiversity rescue mechanisms, we plot the formation of
+hot and cold spots of species frequency along a gradient of migration
+and coevolutionary selection strength. Simulations were run for 10
+sites in the landscape each containing 1000 individuals with equal
+initial abundances for 5 resource and 5 consumer species. Initial mean
+and variance for the biotic, abiotic, and migration traits for
+resources and consumers were drawn from normal distributions,
+$\mathcal{N}(2,12)$, $\mathcal{N}(50,9)$, and
+$\mathcal{N}(60,2)$. Codes and outputs are available from
+https://github.com/melian009/Cometa).
+
+
+\begin{comment}
+Mean species richness decays with the strength of coevolutionary
+selection for the biotic trait in the two scenarios, the modular
+(black) and the integrated (red) scenario (Figure 1b). Adding
+interactions among traits, the integrated scenario, decreases the
+number of species for all the gradient of coevolutionary selection,
+compared to the modular scenario.
+
+Q2: mention the initial values: number of species, population size,
+initial trait variance and covariance values, and the number of
+generations per replicate.
+
+
+Armbruster This study demonstrates the value of allometric and
+variance analyses (in addition to correlation) in assessing the
+evolutionary significance of floral-trait stability and plasticity.
+\end{comment}
+
+% \end{small}
+%\end{singlespace}
+%\end{mybox}
+
+\newpage
+\section{Bibliography}
+\bibliographystyle{unsrtnat}
+\bibliography{space.bib}
+\end{document}
