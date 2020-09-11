@@ -25,25 +25,25 @@ axes.names.axisnames = ("Site", "Generation")
 ### End 1 ###
 #############
 
-### 2. Shannon index of all files within each simulation regime at generation 100.
+### 2. Shannon index of all files within each simulation regime at generation 1000.
 ####################################################################
 
-magicStrongGen101 = shannonIndexDir(magicStrong, 101; nsites=10, nspecies=10)
-magicWeakGen101 = shannonIndexDir(magicWeak, 101; nsites=10, nspecies=10)
-modularStrongGen101 = shannonIndexDir(modularStrong, 101; nsites=10, nspecies=10)
-modularWeakGen101 = shannonIndexDir(modularWeak, 101; nsites=10, nspecies=10)
+magicStrongGen101 = shannonIndexDir(magicStrong, 1001; nsites=10, nspecies=10)
+magicWeakGen101 = shannonIndexDir(magicWeak, 1001; nsites=10, nspecies=10)
+modularStrongGen101 = shannonIndexDir(modularStrong, 1001; nsites=10, nspecies=10)
+modularWeakGen101 = shannonIndexDir(modularWeak, 1001; nsites=10, nspecies=10)
 
 # Put all in a dataframe
 dfall = DataFrame(
   hcat(
     vcat(
-      vec(magicStrongGen101),
-      vec(magicWeakGen101),
+      vec(magicStrongGen101[:, 1:174]),
+      vec(magicWeakGen101[:, 1:174]),
       vec(modularStrongGen101),
       vec(modularWeakGen101),
     ),
-    repeat(1:10, 400),
-    repeat(["magicStrongGen101","magicWeakGen101", "modularStrongGen101", "modularWeakGen101"], inner=1000)
+    repeat(1:10, 174*4),
+    repeat(["magicStrongGen101","magicWeakGen101", "modularStrongGen101", "modularWeakGen101"], inner=6960/4)
   ),
   [:shannonIndex, :site, :regime]
 )
@@ -57,7 +57,7 @@ p = @vlplot(
     field = "shannonIndex",
     type = "quantitative",
     scale = {
-      domain = [3.29, 3.33]
+      domain = [2.9, 3.33]
     },
     axis = {
       title = "Shannon index",
@@ -71,28 +71,28 @@ p = @vlplot(
     }
   }
 )
-VegaLite.save(plotsdir("shannonIndex_regime_gen101.pdf"), p)
+VegaLite.save(plotsdir("shannonIndex_regime_gen1001.pdf"), p)
 ### End 2 ###
 #############
 
-### 3. Species freq. of all files within each simulation regime at generation 100.
+### 3. Species freq. of all files within each simulation regime at generation 1000.
 ####################################################################
 
-magicStrongGen101 = totalSpeciesNumDir(magicStrong; generation=101, nsites=10, nspecies=10)
-magicWeakGen101 =  totalSpeciesNumDir(magicWeak; generation=101, nsites=10, nspecies=10)
-modularStrongGen101 = totalSpeciesNumDir(modularStrong; generation=101, nsites=10, nspecies=10)
-modularWeakGen101 = totalSpeciesNumDir(modularWeak; generation=101, nsites=10, nspecies=10)
+magicStrongGen101 = totalSpeciesNumDir(magicStrong; generation=1001, nsites=10, nspecies=10)
+magicWeakGen101 =  totalSpeciesNumDir(magicWeak; generation=1001, nsites=10, nspecies=10)
+modularStrongGen101 = totalSpeciesNumDir(modularStrong; generation=1001, nsites=10, nspecies=10)
+modularWeakGen101 = totalSpeciesNumDir(modularWeak; generation=1001, nsites=10, nspecies=10)
 
 # Put all in a dataframe
 dfall = DataFrame(
   hcat(
     vcat(
-      vec(magicStrongGen101),
-      vec(magicWeakGen101),
+      vec(magicStrongGen101[1:174]),
+      vec(magicWeakGen101[1:174]),
       vec(modularStrongGen101),
       vec(modularWeakGen101),
     ),
-    repeat(["Magic Strong","Magic Weak", "Modular Strong", "Modular Weak"], inner=100)
+    repeat(["Magic Strong","Magic Weak", "Modular Strong", "Modular Weak"], inner=174)
   ),
   [:speciesCount, :regime]
 )
