@@ -18,7 +18,7 @@ modularWeak = datadir("sims","ModularWeak")
 shannondiv = shannonIndex(joinpath(magicStrong, "data_10.csv"))
 
 using Makie
-p = heatmap(1:10, 1:101, shannondiv')
+p = heatmap(1:10, 1:1001, shannondiv')
 axes = p[Axis];
 axes.names.axisnames = ("Site", "Generation")
 
@@ -43,7 +43,7 @@ dfall = DataFrame(
       vec(modularWeakGen101),
     ),
     repeat(1:10, 174*4),
-    repeat(["magicStrongGen101","magicWeakGen101", "modularStrongGen101", "modularWeakGen101"], inner=6960/4)
+    repeat(["Magic Strong","Magic Weak", "Modular Strong", "Modular Weak"], inner=1740)
   ),
   [:shannonIndex, :site, :regime]
 )
