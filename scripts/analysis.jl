@@ -3,7 +3,7 @@ using DrWatson
 using CSV
 using DataFrames
 using VegaLite
-include(srcdir("julia", "functions.jl"))
+include(srcdir("functions.jl"))
 
 # Outouts for each simulation regime
 
