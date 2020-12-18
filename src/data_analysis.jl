@@ -83,7 +83,7 @@ function median_abs_distance_from_zero_only_pos(mat, upperindices)
   return median(mat[intersect(upperindices, only_positive)])
 end
 
-function triu_indices(ntraits)
+function triu_indices(ntraits=10)
   j = ones(ntraits, ntraits)
   uppertri = triu(j, 1)
   upperindices = findall(x-> x==1, uppertri)
@@ -99,7 +99,7 @@ function modularity_distance_per_sp_pond(cooccur_mat, traits)
 
   ponds = levels(cooccur_mat.Charco);
   species = names(cooccur_mat)[2:end];
-  upperindices = triu_indices(ntraits)
+  upperindices = triu_indices()
   for sp in species
     for pond in ponds
       # println(sp, pond)
