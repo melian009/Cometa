@@ -70,23 +70,20 @@ function call_in_data()
   return cooccur_mat, traits 
 end
 
-function sum_abs_distance_from_zero(mat)
-  upperindices = triu_indices(size(mat, 1))
-  return sum(abs.(mat[upperindices]))
+function sum_abs_distance_from_zero(mat, upperindices)
+  sum(abs.(mat[upperindices]))
 end
 
-function median_abs_distance_from_zero(mat)
-  upperindices = triu_indices(size(mat, 1))
-  return median(abs.(mat[upperindices]))
+function median_abs_distance_from_zero(mat, upperindices)
+  median(abs.(mat[upperindices]))
 end
 
-function median_abs_distance_from_zero_only_pos(mat)
-  upperindices = triu_indices(size(mat, 1))
+function median_abs_distance_from_zero_only_pos(mat, upperindices)
   only_positive = findall(mat .> 1)
   return median(mat[intersect(upperindices, only_positive)])
 end
 
-function triu_indices(ntraits)
+function triu_indices(ntraits=10)
   j = ones(ntraits, ntraits)
   uppertri = triu(j, 1)
   upperindices = findall(x-> x==1, uppertri)
@@ -102,14 +99,15 @@ function modularity_distance_per_sp_pond(cooccur_mat, traits)
 
   ponds = levels(cooccur_mat.Charco);
   species = names(cooccur_mat)[2:end];
+  upperindices = triu_indices()
   for sp in species
     for pond in ponds
       # println(sp, pond)
       mat = covar_trait(sp, string(pond); traits = traits)
       if length(mat) > 1
-        sumdis = sum_abs_distance_from_zero(mat)
-        meddis = median_abs_distance_from_zero(mat)
-        meddist_only_pos = median_abs_distance_from_zero_only_pos(mat)
+        sumdis = sum_abs_distance_from_zero(mat, upperindices)
+        meddis = median_abs_distance_from_zero(mat, upperindices)
+        meddist_only_pos = median_abs_distance_from_zero_only_pos(mat, upperindices)
 
         # collect data
         push!(species_all, sp)

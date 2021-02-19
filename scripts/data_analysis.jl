@@ -16,14 +16,14 @@ cooccur_mat, traits = call_in_data();
 species, ponds, sumdist_all, meddist_all, meddist_only_positive_all = modularity_distance_per_sp_pond(cooccur_mat, traits);
 
 # 3. retrieve the number of species per pond
-n_species_per_pond = sum(Matrix(cooccur_mat[:, 2:end]), dims=2)
+n_species_per_pond = sum(Matrix(cooccur_mat[:, 2:end]), dims=2);
 
 pond_order = string.(cooccur_mat[1]);
 
 # 4. merge all the data to the same df
 final_df = DataFrame(
   :species => species,
-  :pond => pond,
+  :pond => ponds,
   :dist_sum => sumdist_all,
   :dist_med => meddist_all,
   :dist_med_only_pos => meddist_only_positive_all,
@@ -82,6 +82,9 @@ p3 = final_df |> @vlplot(
 )
 
 VegaLite.save(plotsdir("med_distance_from_modularity_only_pos_vs_number_species_per_pond.pdf"), p3)
+
+pall = @vlplot() + [p2 p3]
+VegaLite.save(plotsdir("med_distance_from_modularity_vs_number_species_per_pond.pdf"), pall)
 
 # Correlation significance
 OneSampleZTest(atanh(cor(final_df.dist_med, final_df.n_species_in_pond)), 1, nrow(final_df)-3) # p = 0.0180
