@@ -1,0 +1,1 @@
+bottleneck(a, m) = false
