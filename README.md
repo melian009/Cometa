@@ -2,6 +2,8 @@
 
 Coevolutionary rescue in changing landscapes
 
+The interplay between the evolution of complex trait architecture and biodiversity function loss
+
 ### SNSF Scientific event 
 ### Title: COevolutionary dynamics in META-ecosystems (COMETA)
 
@@ -28,6 +30,7 @@ of co-evolved species, their role in ecosystem function, and the risk of collaps
 ecosystems across different spatio-temporal scales.
 
 
+<<<<<<< HEAD
 ### Abstract (https://www.overleaf.com/8451757386gnnrmpvtfbhs) 
 Many studies in ecology and evolution have reported complex genotype to trait in-
 teractions suggesting that selection does not operate on traits in isolation, but instead
@@ -62,3 +65,10 @@ ecosystems
          
          
         
+=======
+OVERLEAF
+https://www.overleaf.com/8451757386gnnrmpvtfbhs
+
+SWITCH DRIVE (REFS)
+https://drive.switch.ch/index.php/s/1EEtIsh5BDH5v2g
+>>>>>>> 59c9b57b9da80b88b001032ee49e29618b0daa13
