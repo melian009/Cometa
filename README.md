@@ -30,8 +30,45 @@ of co-evolved species, their role in ecosystem function, and the risk of collaps
 ecosystems across different spatio-temporal scales.
 
 
+<<<<<<< HEAD
+### Abstract (https://www.overleaf.com/8451757386gnnrmpvtfbhs) 
+Many studies in ecology and evolution have reported complex genotype to trait in-
+teractions suggesting that selection does not operate on traits in isolation, but instead
+act on combinations of traits. Despite strong empirical signals of correlations between
+interacting traits seem pervasive, yet, the relevant theory connecting genomics processes,
+trait architecture and biodiversity dynamics and function is at a very incipient stage.
+Here, we introduce a framework to explore the interplay between genome architecture
+of complex traits and biodiversity dynamics to show how correlations between interact-
+ing traits influence biodiversity patterns along levels of organization, space and time.
+We study patterns of trait architecture, from random to modular and to correlational
+selection architectures favouring trait integration and correlational selection where trait
+hierarchies also play a role. TODO: Our results also suggest that correlational selection
+has profound implications for genomics patterns, trait architecture, species coexistence
+and biodiversity function gain and loss. Contrary to trait modularity, trait correlations
+consistently increase variance in population fluctuations, extinction rates, the rates at
+which new functions are gained and lost, and decrease the number of coexisting species
+(preliminary). Our results also show a robust emergence of complex genetic and trait
+architectures from basic neutral landscapes, suggesting that strong genetic and ecological
+drift underlie biodiversity extinction dynamics and function gains and losses in complex
+ecosystems
+
+
+### Timeline
+
+* EvoDynamics package submission to JOSS https://joss.readthedocs.io/en/latest/index.html
+* Cometa submission (outputs): 
+       * git for the project 
+       * git for scenarios 
+         * Random, modular, integration 
+         * Local vs global optimum for each scenario
+         * Time vs. Size map for speed and tractability
+         
+         
+        
+=======
 OVERLEAF
 https://www.overleaf.com/8451757386gnnrmpvtfbhs
 
 SWITCH DRIVE (REFS)
 https://drive.switch.ch/index.php/s/1EEtIsh5BDH5v2g
+>>>>>>> 59c9b57b9da80b88b001032ee49e29618b0daa13
