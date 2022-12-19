@@ -14,7 +14,8 @@ fdf = combine(gdf, [Symbol("s$i") for i in 1:10] .=> mean)
 f = Figure(resolution=(800, 500))
 ax = Axis(f[1, 1],
   xlabel="Time",
-  ylabel="Species frequency"
+  ylabel="Species frequency",
+  yscale = Makie.pseudolog10
 )
 for sp in 1:10
   lines!(ax, fdf.step, fdf[:, sp+1], label="S$sp", strokewidth=2)
