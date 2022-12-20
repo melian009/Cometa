@@ -37,15 +37,15 @@ function create_single_parameter_file(pf, migration_rate, biotic_coeff, paramdir
   return outfile
 end
 
-function create_parameter_combinations(pf, migration_rates, biotic_coeffs)
+function create_parameter_combinations(pf, migration_rates, biotic_coeffs, paramdir=paramdir)
   for mrate in migration_rates
     for biocoef in biotic_coeffs
-      create_single_parameter_file(pf, mrate, biocoef)
+      create_single_parameter_file(pf, mrate, biocoef, paramdir)
     end
   end
 end
 
-create_parameter_combinations(pf, migration_thresholds, biotic_variances)
+create_parameter_combinations(pf, migration_thresholds, biotic_variances, paramdir)
 
 all_parameter_files = readdir(paramdir)
 
