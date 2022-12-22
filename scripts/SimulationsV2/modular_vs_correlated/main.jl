@@ -50,7 +50,7 @@ all_parameter_files = readdir(paramdir)
 
 for f in all_parameter_files
   param_file = joinpath(paramdir, f)
-  adata, mdata, models = runmodel(param_file, replicates=7, parallel=true, showprogress=true)
+  adata, mdata, models = runmodel(param_file, replicates=7, parallel=true)
   if !isdir(results_dir)
     mkdir(results_dir)
   end
