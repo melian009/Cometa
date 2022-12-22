@@ -17,3 +17,8 @@
 ## Food resources matrix
 
 * We keep a fixed food_resources matrix and run the simulations. In another set, we randomize the `food_resources` matrix. To randomize, we can keep the number of non-zeros and predator, preys, but random combination. The `interactions` matrix will always follow the `food_resources` matrix, having a 1 where ever there is a non-zero value in the `food_resources`.
+
+## Blake feedback
+* Trait architecture modular vs correlated
+* Biotic niche specialization: All consumers one resource 
+* No trait variation: all individuals same pleiotropy, epistasis and regulation 
