@@ -7,7 +7,7 @@ using Statistics
 using DrWatson
 using DataVoyager
 
-sim_output_dir = "sim_outputs/"
+sim_output_dir = "sim_outputs_correlated/"
 
 
 function create_stats_from_sims(sim_output_dir)
@@ -51,15 +51,16 @@ end
 
 summary = create_stats_from_sims(sim_output_dir)
 
+Voyager(summary)
 
-## Plots
+# ## Plots
 
-f = Figure(resolution=(800, 500))
-ax = Axis(f[1, 1],
-  xlabel="Migration threshold",
-  ylabel="Biotic variance (higher -> more interactions)",
-  # yscale = Makie.pseudolog10
-)
+# f = Figure(resolution=(800, 500))
+# ax = Axis(f[1, 1],
+#   xlabel="Migration threshold",
+#   ylabel="Biotic variance (higher -> more interactions)",
+#   # yscale = Makie.pseudolog10
+# )
 
-heatmap(summary.migration, summary.biotic_variance, hcat(summary.survived_species_count_at_midtime, summary.survived_species_count_at_the_end))
+# heatmap(summary.migration, summary.biotic_variance, hcat(summary.survived_species_count_at_midtime, summary.survived_species_count_at_the_end))
 
