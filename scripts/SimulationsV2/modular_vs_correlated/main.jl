@@ -18,7 +18,6 @@ function create_single_parameter_file(pf, migration_rate, biotic_coeff, paramdir
   if !isdir(paramdir)
     mkdir(paramdir)
   end
-  mkdir(paramdir)
   outfile = joinpath(paramdir, "params_migration_rate=$(migration_rate)_biotic_coeff=$(biotic_coeff)_fixed_interaction_mat.jl")
   input = readlines(pf)
   # Update migration threshold
