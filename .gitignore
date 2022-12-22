@@ -7,6 +7,10 @@ videos
 notebooks
 _research
 data/sims
+sim_outputs_modular
+parameter_files_modular
+sim_outputs_correlated
+parameter_files_correlated
 sim_outputs
 parameter_files
 ################################################################################
