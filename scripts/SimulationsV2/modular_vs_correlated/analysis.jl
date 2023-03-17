@@ -7,7 +7,8 @@ using Statistics
 using DrWatson
 using DataVoyager
 
-sim_output_dir = "sim_outputs_correlated/"
+#sim_output_dir = "outputs/modular/"
+sim_output_dir = "outputs/correlated/"
 
 
 function create_stats_from_sims(sim_output_dir)
