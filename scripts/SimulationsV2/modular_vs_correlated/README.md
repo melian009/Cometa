@@ -1,3 +1,5 @@
+* Data Vogager data exploration 
+
 * We want to explore a range of simulations, each one having a different `migration_threshold` and biotic selection coefficient (`biotic_variance`).
 * 10 Replicates per combination.
 * There is no mutation or evolving trait architecture.
