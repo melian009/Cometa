@@ -1,7 +1,7 @@
 using Distributed
 using Pkg
 Pkg.activate(".")
-addprocs(6)
+addprocs(12)
 @everywhere using EvoDynamics
 using JLD2
 using FileIO
