@@ -1,4 +1,4 @@
-generations = 150
+generations = 500
 space = (10, 20)
 
 ## 2. Species parameters
