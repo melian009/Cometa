@@ -6,14 +6,14 @@ addprocs(12)
 using JLD2
 using FileIO
 using Distributions
-
+include("data_collection_functions.jl")
 
 pf = "parameters_frame.jl"
 paramdir = "parameter_files_modular/"
 results_dir = "sim_outputs_modular/"
 
 migration_thresholds = [0.0, 0.1, 1.0, 2.0, 5.0, 10.0]
-biotic_variances = [0.0, 0.1, 1.0, 2.0, 5.0, 10.0]
+biotic_variances = [0.0, 0.1, 0.5, 1.0, 2.0, 5.0]
 
 
 # ################################################################
@@ -126,7 +126,7 @@ all_parameter_files = readdir(paramdir)
 
 for f in all_parameter_files
   param_file = joinpath(paramdir, f)
-  adata, mdata, models = runmodel(param_file, replicates=nreplicates, parallel=true)
+  adata, mdata, models = runmodel(param_file, replicates=nreplicates, mdata=[EvoDynamics.mean_fitness_per_species, EvoDynamics.species_N, mean_espistasis_matrix_per_species], parallel = true)
   if !isdir(results_dir)
     mkdir(results_dir)
   end
