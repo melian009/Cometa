@@ -4,6 +4,7 @@ using PlotlyJS, CSV, DataFrames
 using StatsPlots
 using Images
 using FileIO
+using Plots, PyPlot, GR
 
 
 # Define the number of genes and alleles
@@ -24,7 +25,7 @@ function non_additive_polygenic_epistasis_model(genotypes)
         trait_value = 0.0
         
         # Define epistasis coefficients (random for simplicity)
-        epistasis_coeffs = rand(-1.0:0.1:1.0, num_genes, num_genes)
+        epistasis_coeffs = rand(-5.0:0.1:5.0, num_genes, num_genes)
         
         # Calculate trait value with non-additive epistasis
         for j in 1:num_genes
@@ -48,6 +49,8 @@ println(genotypes)
 
 println("\nTrait Values:")
 println(trait_values)
-#hist(trait_values)
-A = density!(trait_values)#Hold on density plot along num genes 10 red-blue, 100 green and 1000 purple
-savefig("epistasis.png")
+pyplot()
+#https://stackoverflow.com/questions/70165162/undefvarerror-histogram-not-defined-in-julia
+density!(trait_values)#Hold on density plot along num genes 10 y1=blue, 50 y2=green, 100 y3=red and 1000 y4=purple
+#https://docs.juliaplots.org/latest/generated/statsplots/
+
