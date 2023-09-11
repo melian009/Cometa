@@ -1,3 +1,6 @@
+#Check README.EPISTASIS.md for code generation
+#Simulation non-additive epistasis nadepi.jl
+
 using Random
 using StatsBase
 using PlotlyJS, CSV, DataFrames

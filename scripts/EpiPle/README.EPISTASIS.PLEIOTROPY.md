@@ -1,3 +1,12 @@
+#Sequence of codes --------------------
+nadepi.jl non-additive epistasis
+nadepiw.jl non-additive epistasis with fitness
+
+epiple.jl most basic non-additive pleiotropy and pleiotropy: 2 genes 2 traits: plot trait hierarchy heatmap
+
+popgen.dynamics folder: adding dynamics
+#--------------------------------------
+
 Sept 8 2023
 Default (GPT-3.5)
 julia code for the Fisher’s Geometric model
