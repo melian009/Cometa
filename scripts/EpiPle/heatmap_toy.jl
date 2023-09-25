@@ -22,11 +22,19 @@ ax = Axis(fig[1, 1],
   xlabel="Abiotic variance",
   ylabel="Biotic variance"
 )
+
+# Change the ticks to be in a smaller range
+ticks = collect(1:5:nrows)
+ticklabels = string.(ticks ./ 5)
+ax.xticks = (ticks, ticklabels)
+ax.yticks = (ticks, ticklabels)
+
+
 # Add a heatmap 
 hm = heatmap!(ax, data, colormap=:grays)
 
 # Add a colorbar
-Colorbar(fig[1, 2], hm, label = "Distance")
+Colorbar(fig[1, 2], hm, label = "Hierarchy")
 
 # Save
 save("heatmap.png", fig; px_per_unit=150)
