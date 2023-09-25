@@ -1,12 +1,14 @@
 using Distributed
 using Pkg
 Pkg.activate(".")
-addprocs(6)
+addprocs(10)
 @everywhere using EvoDynamics
+@everywhere using Agents
+@everywhere using Statistics
 using JLD2
 using FileIO
 using Distributions
-include("data_collection_functions.jl")
+@everywhere include("data_collection_functions.jl")
 
 pf = "parameters_frame.jl"
 paramdir = "parameter_files_correlated/"
@@ -14,7 +16,6 @@ results_dir = "sim_outputs_correlated/"
 
 migration_thresholds = [0.0, 0.1, 1.0, 2.0, 5.0, 10.0]
 biotic_variances = [0.0, 0.1, 0.5, 1.0, 2.0, 5.0]
-
 
 # ################################################################
 # ## Only change the migration_threshold and biotic_variance
@@ -127,7 +128,7 @@ all_parameter_files = readdir(paramdir)
 
 for f in all_parameter_files
   param_file = joinpath(paramdir, f)
-  adata, mdata, models = runmodel(param_file, replicates=nreplicates, mdata=[EvoDynamics.mean_fitness_per_species, EvoDynamics.species_N, mean_espistasis_matrix_per_species], parallel=true)
+  adata, mdata, models = runmodel(param_file, replicates=nreplicates, mdata=[EvoDynamics.mean_fitness_per_species, EvoDynamics.species_N, mean_espistasis_matrix_per_species], parallel=true, when= 0:10:500)
   if !isdir(results_dir)
     mkdir(results_dir)
   end

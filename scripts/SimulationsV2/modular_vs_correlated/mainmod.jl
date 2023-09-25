@@ -1,12 +1,14 @@
 using Distributed
 using Pkg
 Pkg.activate(".")
-addprocs(12)
+addprocs(10)
 @everywhere using EvoDynamics
+@everywhere using Agents
+@everywhere using Statistics
 using JLD2
 using FileIO
 using Distributions
-include("data_collection_functions.jl")
+@everywhere include("data_collection_functions.jl")
 
 pf = "parameters_frame.jl"
 paramdir = "parameter_files_modular/"
@@ -126,7 +128,7 @@ all_parameter_files = readdir(paramdir)
 
 for f in all_parameter_files
   param_file = joinpath(paramdir, f)
-  adata, mdata, models = runmodel(param_file, replicates=nreplicates, mdata=[EvoDynamics.mean_fitness_per_species, EvoDynamics.species_N, mean_espistasis_matrix_per_species], parallel = true)
+  adata, mdata, models = runmodel(param_file, replicates=nreplicates, mdata=[EvoDynamics.mean_fitness_per_species, EvoDynamics.species_N, mean_espistasis_matrix_per_species], parallel=true, when_model = 0:10:500)
   if !isdir(results_dir)
     mkdir(results_dir)
   end

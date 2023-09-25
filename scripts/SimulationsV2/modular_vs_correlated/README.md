@@ -68,3 +68,6 @@
 
 
 
+## Simulation runs
+
+[ ] We are not sure whether collecting mean epistatis matrix is a good thing. So first we just run one replicate per parameter value combination, and then we decide how to run simulations with more replicates. TODO
