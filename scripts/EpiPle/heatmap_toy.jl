@@ -1,5 +1,6 @@
+using Pkg
+Pkg.activate(".")
 using GLMakie
-using LinearAlgebra
 
 nrows = 30
 data = zeros(nrows, nrows)
@@ -37,4 +38,4 @@ hm = heatmap!(ax, data, colormap=:grays)
 Colorbar(fig[1, 2], hm, label = "Hierarchy")
 
 # Save
-save("heatmap.png", fig; px_per_unit=150)
+save("heatmap.png", fig; px_per_unit=300)
