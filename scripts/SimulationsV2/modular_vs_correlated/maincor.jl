@@ -128,7 +128,7 @@ all_parameter_files = readdir(paramdir)
 
 for f in all_parameter_files
   param_file = joinpath(paramdir, f)
-  adata, mdata, models = runmodel(param_file, replicates=nreplicates, mdata=[EvoDynamics.mean_fitness_per_species, EvoDynamics.species_N, mean_espistasis_matrix_per_species], parallel=true, when= 0:10:500)
+  adata, mdata, models = runmodel(param_file, replicates=nreplicates, mdata=[EvoDynamics.mean_fitness_per_species, EvoDynamics.species_N, mean_espistasis_matrix_per_species], parallel=true, when= 0:10:500, showprogress=true)
   if !isdir(results_dir)
     mkdir(results_dir)
   end
