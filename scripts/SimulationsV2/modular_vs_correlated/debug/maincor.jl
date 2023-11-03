@@ -1,7 +1,7 @@
-# using Distributed
+using Distributed
 using Pkg
 Pkg.activate(".")
-addprocs(5)
+addprocs(2)
 @everywhere using EvoDynamics
 @everywhere using Agents
 @everywhere using Statistics
@@ -76,7 +76,7 @@ biotic_variances = [0.0, 0.1, 0.5, 1.0, 2.0, 5.0]
 pmat = trues(3, 21)  # the original pleiotropy_matrix that we will randomize a little bit
 nchanges_mean = 4
 pmat_variations = 10
-nreplicates = 6
+nreplicates = 3
 
 
 """
@@ -135,6 +135,7 @@ for f in all_parameter_files
     mkdir(results_dir)
   end
   param_file = joinpath(paramdir, f)
-  adata, mdata, models = runmodel(param_file, replicates=nreplicates, adata=nothing, mdata=[EvoDynamics.mean_fitness_per_species, EvoDynamics.species_N, mean_espistasis_matrix_per_species], parallel=true, when_model=0:10:500, showprogress=true, offline_run=false, writing_interval=10, mdata_filename=joinpath(results_dir, "$(f[1:end-3]).csv"))
+  adata, mdata, models = runmodel(param_file, adata=nothing, mdata=[EvoDynamics.mean_fitness_per_species, EvoDynamics.species_N, mean_espistasis_matrix_per_species], parallel=false, when_model=0:10:500, showprogress=true, offline_run=false, writing_interval=10, mdata_filename=joinpath(results_dir, "$(f[1:end-3]).csv"))
   save(joinpath(results_dir, "$(f[1:end-3]).jld2"), "results", mdata)
+  break
 end
