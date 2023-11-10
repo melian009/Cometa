@@ -1,7 +1,9 @@
 using Distributed
 using Pkg
 Pkg.activate(".")
-addprocs(5)
+nreplicates = 2
+max_parallel = 20
+addprocs(nreplicates*max_parallel)
 @everywhere using EvoDynamics
 @everywhere using Agents
 @everywhere using Statistics
@@ -11,6 +13,7 @@ addprocs(5)
 using JLD2
 using FileIO
 using Distributions
+using ConcurrentCollections
 @everywhere include("data_collection_functions.jl")
 # include("data_collection_functions.jl")
 
@@ -76,7 +79,6 @@ biotic_variances = [0.0, 0.1, 0.5, 1.0, 2.0, 5.0]
 pmat = trues(3, 21)  # the original pleiotropy_matrix that we will randomize a little bit
 nchanges_mean = 4
 pmat_variations = 10
-nreplicates = 6
 
 
 """
@@ -130,11 +132,36 @@ create_parameter_combinations2(pf, pmat, migration_thresholds, biotic_variances,
 
 all_parameter_files = readdir(paramdir)
 
-for f in all_parameter_files
-  if !isdir(results_dir)
-    mkdir(results_dir)
-  end
+if !isdir(results_dir)
+  mkdir(results_dir)
+end
+# Run n simulations simultaneously and wait until one or more of them is finished before supplying more simulations, you can use the following approach:
+
+@everywhere function run_simulation(f, paramdir, results_dir, nreplicates)
   param_file = joinpath(paramdir, f)
+
   adata, mdata, models = runmodel(param_file, replicates=nreplicates, adata=nothing, mdata=[EvoDynamics.mean_fitness_per_species, EvoDynamics.species_N, mean_espistasis_matrix_per_species], parallel=true, when_model=0:10:500, showprogress=true, offline_run=false, writing_interval=10, mdata_filename=joinpath(results_dir, "$(f[1:end-3]).csv"))
+
   save(joinpath(results_dir, "$(f[1:end-3]).jld2"), "results", mdata)
 end
+
+@distributed for i in 1:length(all_parameter_files)
+  if i <= max_parallel
+    run_simulation(all_parameter_files[i], paramdir, results_dir, nreplicates)
+  else
+    # Wait for any worker to finish before starting a new simulation
+    fetch(@async run_simulation(all_parameter_files[i], paramdir, results_dir, nreplicates))
+  end
+end
+
+# Wait for all simulations to finish
+@distributed wait for _ in 1:length(all_parameter_files)
+end
+
+## No waiting for max_parallel
+# for f in all_parameter_files
+#   param_file = joinpath(paramdir, f)
+#   adata, mdata, models = runmodel(param_file, replicates=nreplicates, adata=nothing, mdata=[EvoDynamics.mean_fitness_per_species, EvoDynamics.species_N, mean_espistasis_matrix_per_species], parallel=true, when_model=0:10:500, showprogress=true, offline_run=false, writing_interval=10, mdata_filename=joinpath(results_dir, "$(f[1:end-3]).csv"))
+#   save(joinpath(results_dir, "$(f[1:end-3]).jld2"), "results", mdata)
+# end
+
