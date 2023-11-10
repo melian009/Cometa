@@ -144,17 +144,16 @@ end
   save(joinpath(results_dir, "$(f[1:end-3]).jld2"), "results", mdata)
 end
 
-@distributed for i in 1:length(all_parameter_files)
-  if i <= max_parallel
-    @spawn run_simulation(all_parameter_files[i], paramdir, results_dir, nreplicates)
-  else
-    # Wait for any worker to finish before starting a new simulation
-    fetch(@spawn run_simulation(all_parameter_files[i], paramdir, results_dir, nreplicates))
+# Use @distributed to run simulations in parallel with a limit
+@sync for i in 1:length(all_parameter_files)
+  @async begin
+    if i <= max_parallel
+      run_simulation(all_parameter_files[i], paramdir, results_dir, nreplicates)
+    else
+      # Wait for any worker to finish before starting a new simulation
+      wait(@async run_simulation(all_parameter_files[i], paramdir, results_dir, nreplicates))
+    end
   end
-end
-
-# Wait for all simulations to finish
-@distributed wait for _ in 1:length(all_parameter_files)
 end
 
 ## No waiting for max_parallel
