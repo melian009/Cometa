@@ -145,11 +145,11 @@ end
 end
 
 @distributed for i in 1:length(all_parameter_files)
-  if i <= max_parallel
-    run_simulation(all_parameter_files[i], paramdir, results_dir, nreplicates)
+  if i <= max_simulations
+    @spawn run_simulation(all_parameter_files[i], paramdir, results_dir, nreplicates)
   else
     # Wait for any worker to finish before starting a new simulation
-    fetch(@async run_simulation(all_parameter_files[i], paramdir, results_dir, nreplicates))
+    fetch(@spawn run_simulation(all_parameter_files[i], paramdir, results_dir, nreplicates))
   end
 end
 
