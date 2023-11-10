@@ -13,7 +13,6 @@ addprocs(nreplicates*max_parallel)
 using JLD2
 using FileIO
 using Distributions
-using ConcurrentCollections
 @everywhere include("data_collection_functions.jl")
 # include("data_collection_functions.jl")
 
