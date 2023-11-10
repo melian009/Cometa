@@ -134,27 +134,41 @@ all_parameter_files = readdir(paramdir)
 if !isdir(results_dir)
   mkdir(results_dir)
 end
-# Run n simulations simultaneously and wait until one or more of them is finished before supplying more simulations, you can use the following approach:
 
-@everywhere function run_simulation(f, paramdir, results_dir, nreplicates)
+# Run max_parallel simulations simultaneously and wait until one or more of them is finished before supplying more simulations, you can use the following approach:
+
+@everywhere function run_simulation(f, paramdir, results_dir, nreplicates, counter)
   param_file = joinpath(paramdir, f)
 
-  adata, mdata, models = runmodel(param_file, replicates=nreplicates, adata=nothing, mdata=[EvoDynamics.mean_fitness_per_species, EvoDynamics.species_N, mean_espistasis_matrix_per_species], parallel=true, when_model=0:10:500, showprogress=true, offline_run=false, writing_interval=10, mdata_filename=joinpath(results_dir, "$(f[1:end-3]).csv"))
+  adata, mdata, models = runmodel(param_file, replicates=nreplicates, adata=nothing, mdata=[EvoDynamics.mean_fitness_per_species, EvoDynamics.species_N, mean_espistasis_matrix_per_species], parallel=true, when_model=0:10:500, showprogress=true)
 
   save(joinpath(results_dir, "$(f[1:end-3]).jld2"), "results", mdata)
+
+  # decrement the counter
+  Base.Threads.atomic_add!(counter, -1)
 end
 
-# Use @distributed to run simulations in parallel with a limit
-@sync for i in 1:length(all_parameter_files)
-  @async begin
-    if i <= max_parallel
-      run_simulation(all_parameter_files[i], paramdir, results_dir, nreplicates)
-    else
-      # Wait for any worker to finish before starting a new simulation
-      wait(@async run_simulation(all_parameter_files[i], paramdir, results_dir, nreplicates))
+using Base.Threads
+counter = Atomic{Int64}(0)
+
+# Launch simulations
+@sync begin
+  for f in all_parameter_files
+    @async begin
+      while true
+        if counter.value < max_parallel
+          # increment the counter
+          Base.Threads.atomic_add!(counter, 1)
+          run_simulation(f, paramdir, results_dir, nreplicates, counter)
+          break
+        else
+          sleep(30)
+        end
+      end
     end
   end
 end
+
 
 ## No waiting for max_parallel
 # for f in all_parameter_files
