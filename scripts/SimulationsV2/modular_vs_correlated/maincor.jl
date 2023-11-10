@@ -145,7 +145,7 @@ end
 end
 
 @distributed for i in 1:length(all_parameter_files)
-  if i <= max_simulations
+  if i <= max_parallel
     @spawn run_simulation(all_parameter_files[i], paramdir, results_dir, nreplicates)
   else
     # Wait for any worker to finish before starting a new simulation
