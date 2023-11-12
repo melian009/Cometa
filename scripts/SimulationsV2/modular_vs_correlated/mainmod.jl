@@ -1,14 +1,21 @@
 using Distributed
 using Pkg
 Pkg.activate(".")
-addprocs(10)
+nreplicates = 2
+max_parallel = 20
+addprocs(nreplicates*max_parallel)
 @everywhere using EvoDynamics
 @everywhere using Agents
 @everywhere using Statistics
+# using EvoDynamics
+# using Agents
+# using Statistics
 using JLD2
 using FileIO
 using Distributions
 @everywhere include("data_collection_functions.jl")
+# include("data_collection_functions.jl")
+
 
 pf = "parameters_frame.jl"
 paramdir = "parameter_files_modular/"
@@ -72,8 +79,7 @@ biotic_variances = [0.0, 0.1, 0.5, 1.0, 2.0, 5.0]
 
 pmat = Bool[1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 0; 0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 1 1 1 1 1 0; 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1]  # the original pleiotropy_matrix that we will randomize a little bit
 pmat_variations = 10
-nreplicates = 7
-nchanges_mean = 2
+nchanges_mean = 4
 
 """
 A variation of the create single_parameter_file function that adds random 1's to the pleiotropy_matrix
@@ -101,7 +107,7 @@ function create_single_parameter_file_add_noise_to_pleiotropy(pf, pmat, pmatnum,
   nchanges_dist = Poisson(nchanges_mean)
   nchanges = rand(nchanges_dist)
   pmat2 = deepcopy(pmat)
-  pmat2[rand(findall(x -> x == false, pmat), nchanges)] .= true
+  pmat2[rand(findall(x -> x == true, pmat), nchanges)] .= false
   input[lines] .= ":pleiotropy_matrix => $(pmat2),"
 
   open(outfile, "w") do ff
@@ -126,13 +132,42 @@ create_parameter_combinations(pf, pmat, migration_thresholds, biotic_variances, 
 
 all_parameter_files = readdir(paramdir)
 
-for f in all_parameter_files
-  param_file = joinpath(paramdir, f)
-  adata, mdata, models = runmodel(param_file, replicates=nreplicates, mdata=[EvoDynamics.mean_fitness_per_species, EvoDynamics.species_N, mean_espistasis_matrix_per_species], parallel=true, when_model = 0:10:500)
-  if !isdir(results_dir)
-    mkdir(results_dir)
-  end
-  save(joinpath(results_dir, "$(f[1:end-3]).jld2"), "results", mdata)
+if !isdir(results_dir)
+  mkdir(results_dir)
 end
 
+
+# Run max_parallel simulations simultaneously and wait until one or more of them is finished before supplying more simulations, you can use the following approach:
+
+@everywhere function run_simulation(f, paramdir, results_dir, nreplicates, counter)
+  param_file = joinpath(paramdir, f)
+
+  adata, mdata, models = runmodel(param_file, replicates=nreplicates, adata=nothing, mdata=[EvoDynamics.mean_fitness_per_species, EvoDynamics.species_N, mean_espistasis_matrix_per_species], parallel=true, when_model=0:10:500, showprogress=true)
+
+  save(joinpath(results_dir, "$(f[1:end-3]).jld2"), "results", mdata)
+
+  # decrement the counter
+  Base.Threads.atomic_add!(counter, -1)
+end
+
+using Base.Threads
+counter = Atomic{Int64}(0)
+
+# Launch simulations
+@sync begin
+  for f in all_parameter_files
+    @async begin
+      while true
+        if counter.value < max_parallel
+          # increment the counter
+          Base.Threads.atomic_add!(counter, 1)
+          run_simulation(f, paramdir, results_dir, nreplicates, counter)
+          break
+        else
+          sleep(30)
+        end
+      end
+    end
+  end
+end
 
