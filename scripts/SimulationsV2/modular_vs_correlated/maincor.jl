@@ -1,7 +1,9 @@
 using Distributed
 using Pkg
 Pkg.activate(".")
-addprocs(5)
+nreplicates = 2
+max_parallel = 20
+addprocs(nreplicates*max_parallel)
 @everywhere using EvoDynamics
 @everywhere using Agents
 @everywhere using Statistics
@@ -76,7 +78,6 @@ biotic_variances = [0.0, 0.1, 0.5, 1.0, 2.0, 5.0]
 pmat = trues(3, 21)  # the original pleiotropy_matrix that we will randomize a little bit
 nchanges_mean = 4
 pmat_variations = 10
-nreplicates = 6
 
 
 """
@@ -130,11 +131,49 @@ create_parameter_combinations2(pf, pmat, migration_thresholds, biotic_variances,
 
 all_parameter_files = readdir(paramdir)
 
-for f in all_parameter_files
-  if !isdir(results_dir)
-    mkdir(results_dir)
-  end
-  param_file = joinpath(paramdir, f)
-  adata, mdata, models = runmodel(param_file, replicates=nreplicates, adata=nothing, mdata=[EvoDynamics.mean_fitness_per_species, EvoDynamics.species_N, mean_espistasis_matrix_per_species], parallel=true, when_model=0:10:500, showprogress=true, offline_run=false, writing_interval=10, mdata_filename=joinpath(results_dir, "$(f[1:end-3]).csv"))
-  save(joinpath(results_dir, "$(f[1:end-3]).jld2"), "results", mdata)
+if !isdir(results_dir)
+  mkdir(results_dir)
 end
+
+# Run max_parallel simulations simultaneously and wait until one or more of them is finished before supplying more simulations, you can use the following approach:
+
+@everywhere function run_simulation(f, paramdir, results_dir, nreplicates, counter)
+  param_file = joinpath(paramdir, f)
+
+  adata, mdata, models = runmodel(param_file, replicates=nreplicates, adata=nothing, mdata=[EvoDynamics.mean_fitness_per_species, EvoDynamics.species_N, mean_espistasis_matrix_per_species], parallel=true, when_model=0:10:500, showprogress=true)
+
+  save(joinpath(results_dir, "$(f[1:end-3]).jld2"), "results", mdata)
+
+  # decrement the counter
+  Base.Threads.atomic_add!(counter, -1)
+end
+
+using Base.Threads
+counter = Atomic{Int64}(0)
+
+# Launch simulations
+@sync begin
+  for f in all_parameter_files
+    @async begin
+      while true
+        if counter.value < max_parallel
+          # increment the counter
+          Base.Threads.atomic_add!(counter, 1)
+          run_simulation(f, paramdir, results_dir, nreplicates, counter)
+          break
+        else
+          sleep(30)
+        end
+      end
+    end
+  end
+end
+
+
+## No waiting for max_parallel
+# for f in all_parameter_files
+#   param_file = joinpath(paramdir, f)
+#   adata, mdata, models = runmodel(param_file, replicates=nreplicates, adata=nothing, mdata=[EvoDynamics.mean_fitness_per_species, EvoDynamics.species_N, mean_espistasis_matrix_per_species], parallel=true, when_model=0:10:500, showprogress=true, offline_run=false, writing_interval=10, mdata_filename=joinpath(results_dir, "$(f[1:end-3]).csv"))
+#   save(joinpath(results_dir, "$(f[1:end-3]).jld2"), "results", mdata)
+# end
+
