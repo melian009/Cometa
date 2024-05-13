@@ -22,7 +22,7 @@ results_dir = "sim_outputs_correlated/"
 
 migration_thresholds = [0.0, 0.1, 1.0, 2.0, 5.0]
 biotic_variances = [0.0, 0.1, 0.5, 1.0, 2.0, 5.0]
-abiotic_variance = [0.0, 0.1, 0.5, 1.0, 2.0, 5.0]
+abiotic_variances = [0.0, 0.1, 0.5, 1.0, 2.0, 5.0]
 selection_coefficients = [0.01, 0.12, 0.5]
 
 
