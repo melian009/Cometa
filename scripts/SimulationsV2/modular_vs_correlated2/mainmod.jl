@@ -2,7 +2,7 @@ using Distributed
 using Pkg
 Pkg.activate(".")
 nreplicates = 2
-max_parallel = 25
+max_parallel = 15
 addprocs(nreplicates*max_parallel)
 @everywhere using EvoDynamics
 @everywhere using Agents
