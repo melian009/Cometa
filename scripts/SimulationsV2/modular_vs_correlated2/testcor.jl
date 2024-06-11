@@ -3,7 +3,7 @@ Pkg.activate(".")
 using Base.Threads
 nthreads = Threads.nthreads()
 nreplicates = 2
-max_parallel = 2
+max_parallel = 10
 # channel = Channel{String}(nreplicates * max_parallel)
 using EvoDynamics
 using Agents
