@@ -1,7 +1,7 @@
 using Distributed
 using Pkg
 Pkg.activate(".")
-nreplicates = 1
+nreplicates = 3
 addprocs(nreplicates)
 
 @everywhere begin
