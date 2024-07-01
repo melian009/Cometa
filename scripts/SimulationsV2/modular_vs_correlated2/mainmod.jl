@@ -1,20 +1,17 @@
-using Distributed
+# using Distributed
 using Pkg
 Pkg.activate(".")
 nreplicates = 2
-max_parallel = 15
-addprocs(nreplicates*max_parallel)
-@everywhere using EvoDynamics
-@everywhere using Agents
-@everywhere using Statistics
+using EvoDynamics
+using Agents
+using Statistics
 # using EvoDynamics
 # using Agents
 # using Statistics
 using JLD2
 using FileIO
 using Distributions
-@everywhere include("data_collection_functions.jl")
-# include("data_collection_functions.jl")
+include("data_collection_functions.jl")
 
 
 pf = "parameters_frame.jl"
@@ -101,35 +98,35 @@ end
 
 # Run max_parallel simulations simultaneously and wait until one or more of them is finished before supplying more simulations, you can use the following approach:
 
-@everywhere function run_simulation(f, paramdir, results_dir, nreplicates, counter)
+function run_simulation(f, paramdir, results_dir, nreplicates, counter)
   param_file = joinpath(paramdir, f)
 
   adata, mdata, models = runmodel(param_file, replicates=nreplicates, adata=nothing, mdata=[EvoDynamics.mean_fitness_per_species, EvoDynamics.species_N, mean_espistasis_matrix_per_species], parallel=true, when_model=0:10:500, showprogress=true)
 
   save(joinpath(results_dir, "$(f[1:end-3]).jld2"), "results", mdata)
 
-  # decrement the counter
-  Base.Threads.atomic_add!(counter, -1)
+  # # decrement the counter
+  # Base.Threads.atomic_add!(counter, -1)
 end
 
-using Base.Threads
-counter = Atomic{Int64}(0)
+# using Base.Threads
+# counter = Atomic{Int64}(0)
 
-# Launch simulations
-@sync begin
-  for f in all_parameter_files
-    @async begin
-      while true
-        if counter.value < max_parallel
-          # increment the counter
-          Base.Threads.atomic_add!(counter, 1)
-          run_simulation(f, paramdir, results_dir, nreplicates, counter)
-          break
-        else
-          sleep(30)
-        end
-      end
-    end
-  end
-end
+# # Launch simulations
+# @sync begin
+#   for f in all_parameter_files
+#     @async begin
+#       while true
+#         if counter.value < max_parallel
+#           # increment the counter
+#           Base.Threads.atomic_add!(counter, 1)
+#           run_simulation(f, paramdir, results_dir, nreplicates, counter)
+#           break
+#         else
+#           sleep(30)
+#         end
+#       end
+#     end
+#   end
+# end
 

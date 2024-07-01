@@ -511,15 +511,9 @@ version = "1.0.2"
 
 [[deps.NearestNeighbors]]
 deps = ["Distances", "StaticArrays"]
-<<<<<<< HEAD
 git-tree-sha1 = "91a67b4d73842da90b526011fa85c5c4c9343fe0"
 uuid = "b8a86587-4115-5ab1-83bc-aa920d37bbce"
 version = "0.4.18"
-=======
-git-tree-sha1 = "e4a9d37f0ee694da969def1f0dd4654642dfb51c"
-uuid = "b8a86587-4115-5ab1-83bc-aa920d37bbce"
-version = "0.4.17"
->>>>>>> 4cab362a63a92d216c8770f27a20a956d0075d32
 
 [[deps.NetworkOptions]]
 uuid = "ca575930-c2e3-43a9-ace4-1e988b2c1908"
