@@ -1,11 +1,11 @@
 #!/bin/bash
 
-paramdir="./parameter_files_modular"
-results_dir="./sim_outputs_modular"
+paramdir="./parameter_files_correlated"
+results_dir="./sim_outputs_correlated"
 nreplicates=2
 
 # Create param files
-julia mainmod.jl
+julia maincor.jl
 
 # Find all parameter files in the paramdir
 files=($(find $paramdir -type f -name "*.jl"))
@@ -18,7 +18,7 @@ for ((i=0; i<${#files[@]}; i+=10)); do
         output_file="${results_dir}/${filename%.jl}.jld2"
         
         if [ ! -f "$output_file" ]; then
-            julia run_sims_bash_mod.jl "$filename" "$paramdir" "$results_dir" "$nreplicates" &
+            julia run_sims_bash_cor.jl "$filename" "$paramdir" "$results_dir" "$nreplicates" &
         else
             echo "Output file $output_file already exists. Skipping simulation for $filename."
         fi
