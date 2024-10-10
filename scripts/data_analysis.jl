@@ -1,3 +1,5 @@
+using Pkg
+Pkg.activate(".")
 using DrWatson
 @quickactivate
 using CSV

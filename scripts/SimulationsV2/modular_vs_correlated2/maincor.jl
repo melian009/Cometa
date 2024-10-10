@@ -43,7 +43,7 @@ function create_single_parameter_file_add_noise_to_pleiotropy2(pf, pmat, pmatnum
   if !isdir(paramdir)
     mkdir(paramdir)
   end
-  outfile = joinpath(paramdir, "params_migration_rate=$(migration_rate)_biotic_coeff=$(biotic_coeff)_fixed_interaction_mat_$(pmatnum).jl")
+  outfile = joinpath(paramdir, "params_migration_rate=$(migration_rate)_biotic_coeff=$(biotic_coeff)_fixed_interaction_mat_$(pmatnum)_abiotic_coeff=$(abiotic_coeff)_selection_coeff=$(selection_coeff).jl")
   input = readlines(pf)
   # Update migration threshold
   lines = findall(x -> startswith(strip(x), ":migration_threshold"), input)
