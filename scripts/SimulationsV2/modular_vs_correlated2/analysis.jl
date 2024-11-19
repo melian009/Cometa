@@ -60,8 +60,8 @@ end
 
 modular_sim_values = Dict()
 for (sim_name, sim_output) in modular_sim_outputs
-    migration_rate, biotic_coeff, fixed_interaction_mat = extract_values(sim_name)
-    modular_sim_values[(migration_rate, biotic_coeff, fixed_interaction_mat)] = sim_output
+  migration_rate, biotic_coeff, fixed_interaction_mat, abiotic_coeff, selection_coeff = extract_values(sim_name)
+  modular_sim_values[(migration_rate, biotic_coeff, fixed_interaction_mat, abiotic_coeff, selection_coeff)] = sim_output
 end
 
 function calculate_shannon_diversity_index(df::DataFrame; species_col::Symbol=:species_N)
@@ -137,8 +137,9 @@ df2 = DataFrame()
 df2.migration_rate = [mean(k[migration_rate]) for k in sorted_keys_modular]
 df2.biotic_coeff = [mean(k[biotic_coeff]) for k in sorted_keys_modular]
 df2.fixed_interaction_mat = [mean(k[fixed_interaction_mat]) for k in sorted_keys_modular]
+df2.abiotic_coeff = [mean(k[abiotic_coeff]) for k in sorted_keys_modular]
+df2.selection_coeff = [mean(k[selection_coeff]) for k in sorted_keys_modular]
 df2.diversity_index = [mean(div_per_sim_modular[k]) for k in sorted_keys_modular]
-
 groups = groupby(df2, :migration_rate)
 
 # plot: heatmap where x axis is biotic coeff, y axis is abiotic coeff, color is diversity index
@@ -152,5 +153,5 @@ for group in groups
     height=500
   )
 
-  VegaLite.save(joinpath("plots", "modular_heatmap_biotic_fixed_diversity_$(group[1,:migration_rate]).png"), p)
+  VegaLite.save(joinpath("plots", "modular_heatmap_biotic_abiotic_diversity_$(group[1,:migration_rate])_$(group[1,:selection_coeff]).png"), p)
 end
