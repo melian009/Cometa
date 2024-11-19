@@ -1,5 +1,6 @@
 using Pkg; Pkg.activate(".")
 using FileIO
+using ImageIO
 using DataFrames
 using Statistics
 using StatsBase
@@ -90,6 +91,12 @@ for (params, df) in correlated_sim_values
   div_per_sim[params] = calculate_shannon_diversity_index(df)
 end
 
+div_per_sim_modular = Dict()
+for (params, df) in modular_sim_values
+  div_per_sim_modular[params] = calculate_shannon_diversity_index(df)
+end
+
+
 # sims sorted by one of the parameters
 
 migration_rate, biotic_coeff, fixed_interaction_mat, abiotic_coeff, selection_coeff = 1:5
@@ -97,6 +104,10 @@ migration_rate, biotic_coeff, fixed_interaction_mat, abiotic_coeff, selection_co
 sorted_sims = sortperm(collect(keys(div_per_sim)), by=x->x[migration_rate])  # change the parameter to sort by as desired
 sorted_keys = collect(keys(div_per_sim))[sorted_sims]
 
+sorted_sims_modular = sortperm(collect(keys(div_per_sim_modular)), by=x -> x[migration_rate])
+sorted_keys_modular = collect(keys(div_per_sim_modular))[sorted_sims_modular]
+
+## Plot correlated
 df1 = DataFrame()
 df1.migration_rate = [mean(k[migration_rate]) for k in sorted_keys]
 df1.biotic_coeff = [mean(k[biotic_coeff]) for k in sorted_keys]
@@ -111,22 +122,35 @@ groups = groupby(df1, [:migration_rate, :selection_coeff])
 for group in groups
   p = group |> @vlplot(
     :rect,
-    x={:biotic_coeff, type=:nominal, title="Biotic coefficient"},
-    y={:abiotic_coeff, type=:nomial, title="Abiotic coefficient"},
+    x = {:biotic_coeff, type = :quantitative, title = "Biotic coefficient"},
+    y = {:abiotic_coeff, type = :quantitative, title = "Abiotic coefficient"},
     color={:diversity_index, scale={scheme="viridis"}},
     width=500,
     height=500
   )
-  # save
-  save(joinpath("plots", "heatmap_biotic_abiotic_diversity_$(group[1,:migration_rate])_$(group[1,:selection_coeff]).png"), p)
+
+  VegaLite.save(joinpath("plots", "correlated_heatmap_biotic_abiotic_diversity_$(group[1,:migration_rate])_$(group[1,:selection_coeff]).png"), p)
 end
 
+## Plot modular
+df2 = DataFrame()
+df2.migration_rate = [mean(k[migration_rate]) for k in sorted_keys_modular]
+df2.biotic_coeff = [mean(k[biotic_coeff]) for k in sorted_keys_modular]
+df2.fixed_interaction_mat = [mean(k[fixed_interaction_mat]) for k in sorted_keys_modular]
+df2.diversity_index = [mean(div_per_sim_modular[k]) for k in sorted_keys_modular]
 
-# julia > p = group |> @vlplot(
-#   :point,
-#   x = {:biotic_coeff, type = :quantitative, title = "Biotic coefficient"},
-#   y = {:abiotic_coeff, type = :quantitative, title = "Abiotic coefficient"},
-#   color = {:diversity_index},
-#   width = 500,
-#   height = 500
-# )
+groups = groupby(df2, :migration_rate)
+
+# plot: heatmap where x axis is biotic coeff, y axis is abiotic coeff, color is diversity index
+for group in groups
+  p = group |> @vlplot(
+    :rect,
+    x = {:biotic_coeff, type = :quantitative, title = "Biotic coefficient"},
+    y = {:fixed_interaction_mat, type = :quantitative, title = "Fixed interaction matrix"},
+    color={:diversity_index, scale={scheme="viridis"}},
+    width=500,
+    height=500
+  )
+
+  VegaLite.save(joinpath("plots", "modular_heatmap_biotic_fixed_diversity_$(group[1,:migration_rate]).png"), p)
+end
