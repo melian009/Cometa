@@ -147,7 +147,7 @@ for group in groups
   p = group |> @vlplot(
     :rect,
     x = {:biotic_coeff, type = :quantitative, title = "Biotic coefficient"},
-    y = {:fixed_interaction_mat, type = :quantitative, title = "Fixed interaction matrix"},
+    y = {:abiotic_coeff, type = :quantitative, title = "Abiotic coefficient"},
     color={:diversity_index, scale={scheme="viridis"}},
     width=500,
     height=500
@@ -155,3 +155,46 @@ for group in groups
 
   VegaLite.save(joinpath("plots", "modular_heatmap_biotic_abiotic_diversity_$(group[1,:migration_rate])_$(group[1,:selection_coeff]).png"), p)
 end
+
+## 3d plot
+
+
+## correlated
+df1.biotic_abiotic_ratio = df1.biotic_coeff ./ df1.abiotic_coeff
+# replace NaN and Inf with missing
+df1.biotic_abiotic_ratio = [isinf(x) || isnan(x) ? missing : x for x in df1.biotic_abiotic_ratio]
+
+
+# Now create the plot
+p = df1 |>
+    @vlplot(
+  width = 600, height = 400,
+  mark = :point,
+  x = {:biotic_abiotic_ratio, title = "Biotic Coefficient / Abiotic Coefficient"},
+  y = {:diversity_index, title = "Diversity Index"},
+  color = {:selection_coeff, title = "Selection Coefficient"},
+  shape = {:migration_rate, title = "Migration Rate"},
+  size = {:selection_coeff, scale = {range = [20, 200]}}
+)
+
+VegaLite.save("plots/correlated_3d_plot.png", p)
+
+## Modular
+df2.biotic_abiotic_ratio = df2.biotic_coeff ./ df2.abiotic_coeff
+# replace NaN and Inf with missing
+df2.biotic_abiotic_ratio = [isinf(x) || isnan(x) ? missing : x for x in df2.biotic_abiotic_ratio]
+
+
+# Now create the plot
+p = df2 |>
+    @vlplot(
+  width = 600, height = 400,
+  mark = :point,
+  x = {:biotic_abiotic_ratio, title = "Biotic Coefficient / Abiotic Coefficient"},
+  y = {:diversity_index, title = "Diversity Index"},
+  color = {:selection_coeff, title = "Selection Coefficient"},
+  shape = {:migration_rate, title = "Migration Rate"},
+  size = {:selection_coeff, scale = {range = [20, 200]}}
+)
+
+VegaLite.save("plots/modular_3d_plot.png", p)
