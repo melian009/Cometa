@@ -143,7 +143,7 @@ df2.abiotic_coeff = [mean(k[abiotic_coeff]) for k in sorted_keys_modular]
 df2.selection_coeff = [mean(k[selection_coeff]) for k in sorted_keys_modular]
 df2.diversity_index = [mean(div_per_sim_modular[k]) for k in sorted_keys_modular]
 
-groups = groupby(df2, :migration_rate)
+groups = groupby(df2, [:migration_rate, :selection_coeff])
 
 # plot: heatmap where x axis is biotic coeff, y axis is abiotic coeff, color is diversity index
 for group in groups
