@@ -8,6 +8,8 @@ using Statistics
 using StatsBase
 using JLD2
 using VegaLite
+using MultivariateStats
+
 
 correlated_sim_outputs_dir = "sim_outputs_correlated/"
 modular_sim_outputs_dir = "sim_outputs_modular/"
@@ -111,11 +113,11 @@ sorted_keys_modular = collect(keys(div_per_sim_modular))[sorted_sims_modular]
 
 ## Plot correlated
 df1 = DataFrame()
-df1.migration_rate = [mean(k[migration_rate]) for k in sorted_keys]
-df1.biotic_coeff = [mean(k[biotic_coeff]) for k in sorted_keys]
-df1.fixed_interaction_mat = [mean(k[fixed_interaction_mat]) for k in sorted_keys]
-df1.abiotic_coeff = [mean(k[abiotic_coeff]) for k in sorted_keys]
-df1.selection_coeff = [mean(k[selection_coeff]) for k in sorted_keys]
+df1.migration_rate = [k[migration_rate] for k in sorted_keys]
+df1.biotic_coeff = [k[biotic_coeff] for k in sorted_keys]
+df1.fixed_interaction_mat = [k[fixed_interaction_mat] for k in sorted_keys]
+df1.abiotic_coeff = [k[abiotic_coeff] for k in sorted_keys]
+df1.selection_coeff = [k[selection_coeff] for k in sorted_keys]
 df1.diversity_index = [mean(div_per_sim[k]) for k in sorted_keys]
 
 groups = groupby(df1, [:migration_rate, :selection_coeff])
@@ -136,11 +138,11 @@ end
 
 ## Plot modular
 df2 = DataFrame()
-df2.migration_rate = [mean(k[migration_rate]) for k in sorted_keys_modular]
-df2.biotic_coeff = [mean(k[biotic_coeff]) for k in sorted_keys_modular]
-df2.fixed_interaction_mat = [mean(k[fixed_interaction_mat]) for k in sorted_keys_modular]
-df2.abiotic_coeff = [mean(k[abiotic_coeff]) for k in sorted_keys_modular]
-df2.selection_coeff = [mean(k[selection_coeff]) for k in sorted_keys_modular]
+df2.migration_rate = [k[migration_rate] for k in sorted_keys_modular]
+df2.biotic_coeff = [k[biotic_coeff] for k in sorted_keys_modular]
+df2.fixed_interaction_mat = [k[fixed_interaction_mat] for k in sorted_keys_modular]
+df2.abiotic_coeff = [k[abiotic_coeff] for k in sorted_keys_modular]
+df2.selection_coeff = [k[selection_coeff] for k in sorted_keys_modular]
 df2.diversity_index = [mean(div_per_sim_modular[k]) for k in sorted_keys_modular]
 
 groups = groupby(df2, [:migration_rate, :selection_coeff])
@@ -158,6 +160,129 @@ for group in groups
   
   VegaLite.save(joinpath("plots", "modular_heatmap_biotic_abiotic_diversity_$(group[1,:migration_rate])_$(group[1,:selection_coeff]).png"), p)
 end
+
+######################################################
+## plots div difference between modular and correlated
+######################################################
+
+correlated_div = Float64[] # df1
+modular_div = Float64[] # df2
+params = NamedTuple[]
+for row in eachrow(df1)
+  df2_equivalent = df2[(df2.migration_rate.==row.migration_rate).&&(df2.selection_coeff.==row.selection_coeff).&&(df2.biotic_coeff.==row.biotic_coeff).&&(df2.abiotic_coeff.==row.abiotic_coeff).&&(df2.fixed_interaction_mat.==row.fixed_interaction_mat), :]
+  if size(df2_equivalent, 1) > 0
+    push!(correlated_div, row.diversity_index)
+    push!(modular_div, df2_equivalent.diversity_index[1])
+    push!(params, (migration_rate=row.migration_rate, biotic_coeff=row.biotic_coeff, abiotic_coeff=row.abiotic_coeff, fixed_interaction_mat=row.fixed_interaction_mat, selection_coeff=row.selection_coeff))
+  end
+end
+div_diff = correlated_div .- modular_div
+df_div = DataFrame(params)
+df_div.correlated_div = correlated_div
+df_div.modular_div=modular_div
+df_div.div_diff=div_diff
+
+# plot 1: PC1 and PC2 of migration_rate  biotic_coeff  abiotic_coeff  fixed_interaction_mat  selection_coeff and the color is the diversity difference
+
+# Prepare data for PCA
+X = Matrix(df_div[:, [:migration_rate, :biotic_coeff, :abiotic_coeff, :fixed_interaction_mat, :selection_coeff]])
+# Standardize the data
+X_standardized = (X .- mean(X, dims=1)) ./ std(X, dims=1)
+
+# Perform PCA
+M = fit(PCA, X_standardized', maxoutdim=2)
+transformed_data = predict(M, X_standardized')' 
+
+# Create DataFrame for plotting
+pca_df = DataFrame(
+    PC1 = transformed_data[:, 1],
+    PC2 = transformed_data[:, 2],
+    div_diff = df_div.div_diff
+)
+
+# Create PCA plot
+p = pca_df |> @vlplot(
+    mark={:point, filled=true},
+    title= "Diversity Difference (Correlated - Modular)",
+    x={:PC1, title="PC1"},
+    y={:PC2, title="PC2"},
+    color={
+        :div_diff, 
+        title="Diversity Difference",
+        scale={
+            scheme="redblue",
+            domain=[-maximum(abs.(pca_df.div_diff)), maximum(abs.(pca_df.div_diff))],
+            domainMid=0
+        }
+    },
+    size={value=100},
+    width=500,
+    height=500
+)
+
+VegaLite.save(joinpath("plots", "pca_diversity_difference.png"), p)
+
+# plot 2: div_diff as points on a horizontal line. There is no y axis. The top three most negative and most positive div_diff values are labeled with the parameter values.
+
+# Sort by diversity difference
+sorted_indices = sortperm(df_div.div_diff)
+top_negative = sorted_indices[1:3]
+top_positive = sorted_indices[end-2:end]
+
+# Create DataFrame for plotting
+plot_df = DataFrame(
+    div_diff = df_div.div_diff,
+    highlight = [i in [top_negative; top_positive] for i in 1:length(df_div.div_diff)],
+    label = ["" for _ in 1:length(df_div.div_diff)]
+)
+
+# Add labels for highlighted points
+for i in [top_negative; top_positive]
+    plot_df.label[i] = "m=$(df_div.migration_rate[i]), b=$(df_div.biotic_coeff[i]), a=$(df_div.abiotic_coeff[i]), s=$(df_div.selection_coeff[i])"
+end
+
+# Create horizontal line plot
+p = plot_df |> @vlplot(
+    width=800,
+    height=200,
+    layer=[
+        {
+            mark={:point},
+            x={:div_diff, title="Diversity Difference (Correlated - Modular)"},
+            y={value=0},
+            color={
+                condition={
+                    test="datum.highlight == true",
+                    value="red"
+                },
+                value="gray"
+            },
+            size={
+                condition={
+                    test="datum.highlight == true",
+                    value=100
+                },
+                value=50
+            }
+        },
+        {
+            mark={:text, angle=270, align="right", dx=-5}, # Changed: align="right" and dx=-5 instead of dy
+            x=:div_diff,
+            y={value=0},
+            text=:label,
+            color={value="black"},
+            selection={
+                grid={type=:single, on="mouseover"}
+            }
+        }
+    ]
+)
+
+VegaLite.save(joinpath("plots", "diversity_difference_horizontal.png"), p)
+
+##########################################################
+## END plots div difference between modular and correlated
+##########################################################
 
 ## 3d plot
 
