@@ -9,7 +9,7 @@ using StatsBase
 using JLD2
 using VegaLite
 using MultivariateStats
-
+using DecisionTree
 
 correlated_sim_outputs_dir = "sim_outputs_correlated/"
 modular_sim_outputs_dir = "sim_outputs_modular/"
@@ -33,15 +33,15 @@ for file in readdir(modular_sim_outputs_dir)
   end
 end
 
-# extract "biotic_coeff", "migration_rate"and "fixed_interaction_mat" values from the simulation names (keys in the dictionaries). Here is how the keys look like: "params_migration_rate=5.0_biotic_coeff=2.0_fixed_interaction_mat_4". 
+# extract "biotic_coeff", "migration_rate"and "fixed_interaction_mat" values from the simulation names (keys in the dictionaries). Here is how the keys look like: "params_migration_rate=5.0_biotic_coeff=2.0_fixed_interaction_mat_4".
 
 function extract_values(sim_name::String)
   # Define the regular expression pattern
   pattern = r"params_migration_rate=(\d+\.?\d*)_biotic_coeff=(\d+\.?\d*)_fixed_interaction_mat_(\d+)_abiotic_coeff=(\d+\.?\d*)_selection_coeff=(\d+\.?\d*)"
-  
+
   # Match the pattern against the simulation name
   matched = Base.match(pattern, sim_name)
-  
+
   # Extract the values from the match
   if matched !== nothing
     migration_rate = parse(Float64, matched.captures[1])
@@ -82,7 +82,7 @@ function calculate_shannon_diversity_index(df::DataFrame; species_col::Symbol=:s
       species_freq = m ./ totalsum
       # Calculate Shannon index only for non-zero frequencies
       shannon = -sum(species_freq[species_freq.>0] .* log2.(species_freq[species_freq.>0]))
-      
+
       shannon_div[generation] = shannon
     end
     shannon_div_all[:, replicate] = shannon_div
@@ -132,7 +132,7 @@ for group in groups
   width=500,
   height=500
   )
-  
+
   VegaLite.save(joinpath("plots", "correlated_heatmap_biotic_abiotic_diversity_$(group[1,:migration_rate])_$(group[1,:selection_coeff]).png"), p)
 end
 
@@ -157,7 +157,7 @@ for group in groups
   width=500,
   height=500
   )
-  
+
   VegaLite.save(joinpath("plots", "modular_heatmap_biotic_abiotic_diversity_$(group[1,:migration_rate])_$(group[1,:selection_coeff]).png"), p)
 end
 
@@ -191,7 +191,7 @@ X_standardized = (X .- mean(X, dims=1)) ./ std(X, dims=1)
 
 # Perform PCA
 M = fit(PCA, X_standardized', maxoutdim=2)
-transformed_data = predict(M, X_standardized')' 
+transformed_data = predict(M, X_standardized')'
 
 # Create DataFrame for plotting
 pca_df = DataFrame(
@@ -207,7 +207,7 @@ p = pca_df |> @vlplot(
     x={:PC1, title="PC1"},
     y={:PC2, title="PC2"},
     color={
-        :div_diff, 
+        :div_diff,
         title="Diversity Difference",
         scale={
             scheme="redblue",
@@ -293,19 +293,19 @@ function weighted_ratio(a, b)
   if a == 0 && b == 0
     return missing
   end
-  
+
   # Calculate the magnitude weight
   magnitude = log10(abs(a) + abs(b) + 1)
-  
+
   # Calculate the basic ratio
   ratio = a / b
-  
+
   # Calculate deviation from 1 (perfect equality)
   deviation = abs(ratio - 1)
-  
+
   # Combine ratio and magnitude in a way that preserves ratio differences
   weighted = sign(ratio - 1) * deviation * magnitude
-  
+
   return isfinite(weighted) ? weighted : missing
 end
 
@@ -347,3 +347,20 @@ size = {:selection_coeff, scale = {range = [20, 200]}}
 )
 
 VegaLite.save("plots/modular_3d_plot.png", p)
+
+
+### decision trees
+features = [:biotic_coeff, :abiotic_coeff, :migration_rate, :selection_coeff]
+
+X = Matrix(df_div[:, features])
+y = df_div.div_diff
+
+model = DecisionTreeRegressor(max_depth=4)
+DecisionTree.fit!(model, X, y)
+print_tree(model, 5)
+
+# save to print tree to a file
+open("plots/decision_tree.txt", "w") do io
+  print_tree(io, model)
+end
+# replace feature1, feature2, etc with the actual feature names manually.
