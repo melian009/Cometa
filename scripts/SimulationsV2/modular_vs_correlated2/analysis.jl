@@ -364,3 +364,8 @@ open("plots/decision_tree.txt", "w") do io
   print_tree(io, model)
 end
 # replace feature1, feature2, etc with the actual feature names manually.
+
+## Write all dataframes to CSV files
+CSV.write("plots/correlated_diversity.csv", df1)
+CSV.write("plots/modular_diversity.csv", df2)
+CSV.write("plots/diversity_difference.csv", df_div)
