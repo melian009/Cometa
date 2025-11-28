@@ -1,0 +1,212 @@
+\documentclass[a4paper,12pt]{elsarticle}
+\usepackage[mathlines,displaymath]{lineno}
+\usepackage{graphicx}
+\usepackage{soul}
+\usepackage[all,2cell,dvips]{xy}
+\usepackage{natbib}
+\usepackage[usenames,rgb]{xcolor} 
+\usepackage{ucs}                                            
+\usepackage[utf8]{inputenc}                                         
+\usepackage{minted}
+\usepackage{array}                                            
+\usepackage{longtable}                                        
+\usepackage{calc}                                             
+\usepackage{multirow}                                         
+\usepackage{hhline}                                          
+\usepackage{ifthen} 
+\usepackage[T1]{fontenc}
+\usepackage[most]{tcolorbox}
+\usepackage{lmodern}
+\newtcolorbox{mybox}{colback=red!5!white,colframe=red!75!black}
+%\newtcolorbox{mybox}{colback=grey!5!white,colframe=red!7https://www.overleaf.com/project/6215193db2c04bccf12b72395!black}
+\usepackage{setspace}
+\usepackage{verbatim}
+\usepackage{etaremune}
+\usepackage{url}
+\usepackage{color}
+\usepackage{graphicx}
+\usepackage{natbib}
+\usepackage{amsmath}
+\usepackage{algorithm}
+\usepackage{ulem}
+\usepackage{amssymb}
+\usepackage[dvipsnames]{xcolor}
+\usepackage{color}
+\usepackage{array}
+\usepackage{float}
+\usepackage{wrapfig}
+\usepackage[noend]{algpseudocode}
+\usepackage{physics}
+\usepackage{amssymb}
+\usepackage{imakeidx}
+%\usepackage[colorlinks=true, urlcolor=blue, linkcolor=black]{hyperref}
+\usepackage{hyperref}
+\usepackage{lscape}
+\usepackage{setspace}   % For double spacing
+\usepackage{lineno}     % For line numbers
+\usepackage{cancel} 
+\usepackage{xcolor}
+\newcommand{\red}[1]{\textcolor{red}{#1}}
+
+\begin{document}
+\maketitle
+
+\begin{tcolorbox}[%
+title=Model parametrization,
+    enhanced, 
+    breakable,
+    frame hidden,
+    overlay broken = {
+        \draw[line width=0.5mm, red, rounded corners]
+        (frame.north west) rectangle (frame.south east);},
+    ]{}
+{\bf Box 2: Trait distribution generation: connecting GWAS data to GPA with epistasis and pleiotropy}\\ 
+
+We start with a polygenic trait, the biotic or the abiotic, and use GWAS to infer epistasis and pleiotropy to decipher the trait distribution. The following are the steps to generate a trait distribution from GWAS-inferred gene-to-gene and gene-to-phenotype interactions:
+\begin{itemize}
+\item GWAS Data (Input)
+\item SNP Selection $\&$ Data Curation
+\item Causal Network Inference
+\item GPA model formulation (eqs. 1 to 15)
+\item Model Parametrization (Optimization), and 
+\item Trait Distribution Generation (Output)
+\end{itemize}
+Having GWAS data as an input, we start the SNP selection to identify the most relevant genetic variants, i.e., the significantly associated SNPs for the traits of interest. Different fine-mapping techniques (e.g., SuSiE, FINEMAP) can be used to refine the causal variants within the associated loci. In a second step, curate **Phenotype Data**, including covariance among traits. This part is important for modeling pleiotropy. Next step is to establish the structure of the causal network by defining the interactions (epistasis) and shared genetic effects (pleiotropy). Gene-Gene Network (Epistasis) are obtained by inferring directly or indirectly regulatory links between the genes corresponding to the selected SNPs. This often requires functional Data: eQTL data, Hi-C (chromatin interaction), protein-protein interaction (PPI) network data. A Bayesian Network inference or Structural Equation Modeling (SEM) is appropriate to find conditional dependencies among gene expressions or variant effects. <For the Gene-Trait Network (Pleiotropy) we would need to analyze the cross-trait correlation of GWAS summary statistics (e.g., using methods like LD Score Regression or Mendelian Randomization) to identify SNPs that affect multiple traits. 
+
+Once we have the gene-to-gene and the gene-to-trait networks, we use them as inputs to our GPA model (eqs. 1-15) to generate trait distributions. We are now in a position to find the optimal values for the model parameters (e.g., the epistasis and pleiotropy values in the model for the trait of interest) that best reproduce the observed GWAS results and empirical trait metrics, mean, variances, kurtosis, etc. This can be obtained by Maximum Likelihood Estimation, Bayesian MCMC, or machine learning-based approaches like autoencoders) to fit the parameters, minimizing the difference between the model's predicted effects and the observed GWAS $\beta$ values. We would need to ensure that the model accurately reproduces the **genetic variance-covariance matrix** ($\Sigma_G$) observed in the GWAS data, which is key to validating the pleiotropic effects. Which GPA best infer the empirical patterns? 
+
+We are now in a position to simulate a population's phenotypes using the parametrized GPA. We propose the following model for the $i$-th trait, $z_i(t)$, is:
+\begin{equation}
+z_i(t) = \sum_{j=1}^{L} b_{ij}(t) \left( \sum_{k=1}^{L} e_{jk}(t) \right).
+\end{equation}
+We can simplify the term in the parenthesis, which represents the **total epistatic influence** originating from locus $j$ and interacting with all other loci $k$:
+\begin{equation}
+j, E_j(t) = \sum_{k=1}^{L} e_{jk}(t),
+\end{equation}
+and substituting this back into the trait equation gives:
+\begin{equation}
+z_i(t) = \sum_{j=1}^{L} b_{ij}(t) E_j(t),
+\end{equation}
+where $L$ is the number of loci, $b_{ij}(t)$ is the **Pleiotropic Effect** coefficient, which is a function of the genotype at locus $j$ and its contribution to trait $i$, and $e_{jk}(t)$ is the **Epistatic Interaction** term between loci $j$ and $k$, which is a function of both genotypes $G_j(t)$ and $G_k(t)$.
+
+For the purpose of generating a likelihood, we must treat the effect coefficients ($b_{ij}$, $e_{jk}$) as **parameters** and the genotype functions as the **data/variables**. We assume that the observed phenotype $Z_i$ for a given individual is the deterministic outcome $z_i$ plus some **unexplained environmental/stochastic noise** $\epsilon_i$.
+\begin{equation}
+Z_i = z_i + \epsilon_i.
+\end{equation}
+A standard assumption in genetics is that this noise follows a **Gaussian (Normal) distribution**:
+\begin{equation}
+\epsilon_i \sim \mathcal{N}(0, \sigma^2_i).
+\end{equation}
+The likelihood of observing a particular trait value $Z_i$ for a given set of parameters $\Theta = \{b_{ij}, e_{jk}\}$, is given by the probability density function of the normal distribution:
+\begin{equation}
+P(Z_i \mid \Theta) = \frac{1}{\sqrt{2\pi\sigma^2_i}} \exp\left(-\frac{(Z_i - z_i)^2}{2\sigma^2_i}\right),
+\end{equation}
+where $z_i = \sum_{j=1}^{L} b_{ij} \left( \sum_{k=1}^{L} e_{jk} \right)$ (dropping $t$ for simplification). Assuming the observations across $N$ individuals and $M$ traits are **independent**, the **Total Likelihood** $\mathcal{L}(\Theta \mid \mathbf{Z})$ is the product of the individual likelihoods:
+\begin{equation}
+\mathcal{L}(\Theta \mid \mathbf{Z}) = \prod_{n=1}^{N} \prod_{i=1}^{M} P(Z_{in} \mid \Theta) = \prod_{n=1}^{N} \prod_{i=1}^{M} \left[ \frac{1}{\sqrt{2\pi\sigma^2_i}} 
+\\
+
+\exp\left(-\frac{\left(Z_{in} - \sum_{j=1}^{L} b_{ij} \left( \sum_{k=1}^{L} e_{jk} \right)\right)^2}{2\sigma^2_i}\right) \right].
+\end{equation}
+
+For practical optimization (finding the best parameters $\Theta$), we use the **Log-Likelihood** $\ln(\mathcal{L})$, as it turns the product into a sum:
+\begin{equation}
+\ln(\mathcal{L}) = \sum_{n=1}^{N} \sum_{i=1}^{M} \left[ -\frac{1}{2} \ln(2\pi\sigma^2_i) - \frac{1}{2\sigma^2_i} \left( Z_{in} - \sum_{j=1}^{L} b_{ij} \left( \sum_{k=1}^{L} e_{jk} \right) \right)^2 \right].
+\end{equation}
+Maximizing this log-likelihood allows us to **parametrize** the model (find the optimal values for $b_{ij}$ and $e_{jk}$) using the GWAS data ($\mathbf{Z}_{in}$) and $\sigma^2_i$ estimates.
+
+\begin{comment}
+## Expected Trait Distribution (Hypothetical Case)
+
+We can simulate an expected trait distribution by defining a simplified set of parameters (the $\mathbf{b}$ and $\mathbf{e}$ matrices) and simulating a population's genotypes.
+
+### Hypothetical scenario
+  * **Loci ($L$):** 3 loci ($j=1, 2, 3$).
+  * **Traits ($M$):** 1 trait ($i=1$). We'll call it $Z$.
+  * **Genotypes ($G_j$):** Discrete values representing the number of risk alleles: $\{0, 1, 2\}$.
+  * **Pleiotropy ($b_{1j}$):**
+      * $b_{11} = 0.5$
+      * $b_{12} = 1.0$
+      * $b_{13} = 0.2$
+  * **Epistasis ($e_{jk}$):** We'll define the epistatic term as the product of genotypes: $e_{jk} = \gamma_{jk} \cdot G_j \cdot G_k$, where $\gamma_{jk}$ is the fixed interaction strength.
+
+$$Z = \sum_{j=1}^{3} b_{1j} \left( \sum_{k=1}^{3} \gamma_{jk} G_j G_k \right)$$
+
+**Fixed Interaction Strengths ($\gamma_{jk}$):**
+| $\gamma_{jk}$ | $k=1$ | $k=2$ | $k=3$ |
+| :---: | :---: | :---: | :---: |
+| **$j=1$** | $0.1$ | $-0.2$ | $0.05$ |
+| **$j=2$** | $-0.2$ | $0.1$ | $0.0$ |
+| **$j=3$** | $0.05$ | $0.0$ | $0.0$ |
+
+The expected distribution will be **Non-Normal** (non-Gaussian) because of the **epistatic (non-linear) interactions**. Since the trait $Z$ is a complex sum of multiplicative terms ($G_j G_k$), the distribution will likely be skewed or multi-modal, depending on the genotype frequencies.
+
+We'll simulate a population of 10,000 individuals, assuming each locus is an independent Bernoulli trial with a risk allele frequency of $p=0.5$.
+
+```python?code_reference&code_event_index=2
+import numpy as np
+import matplotlib.pyplot as plt
+
+# 1. Define Loci and Parameters
+L = 3  # Number of loci
+N = 10000  # Population size
+p_risk = 0.5 # Risk allele frequency
+
+# Pleiotropic Effect Vector (b_1j for trait 1)
+b = np.array([0.5, 1.0, 0.2])
+
+# Epistatic Interaction Strength Matrix (gamma_jk)
+gamma = np.array([
+    [0.1, -0.2, 0.05],
+    [-0.2, 0.1, 0.0],
+    [0.05, 0.0, 0.0]
+])
+
+# 2. Simulate Genotypes
+# G_j is the number of risk alleles: 0, 1, or 2 (binomial distribution)
+# Genotypes is an N x L matrix
+genotypes = np.random.binomial(n=2, p=p_risk, size=(N, L))
+
+# 3. Calculate Trait Z for each individual (Deterministic GP Map)
+trait_Z = np.zeros(N)
+
+for n in range(N):
+    G = genotypes[n, :] # Genotype vector for individual n
+
+    # Epistatic Interaction Term E_j = sum_k(gamma_jk * G_j * G_k)
+    E_terms = np.zeros(L)
+    for j in range(L):
+        # The sum over k of (gamma_jk * G_j * G_k)
+        # Note: G_j is fixed in the outer loop, G_k iterates
+        E_j = 0
+        for k in range(L):
+            E_j += gamma[j, k] * G[j] * G[k]
+        E_terms[j] = E_j
+
+    # Final Trait Z_n = sum_j(b_j * E_j)
+    Z_n = np.sum(b * E_terms)
+    trait_Z[n] = Z_n
+
+# 4. Plot the Trait Distribution
+plt.figure(figsize=(8, 5))
+# Use histtype='stepfilled' for a clearer bar-like plot and bins to cover the observed range
+plt.hist(trait_Z, bins=np.arange(trait_Z.min(), trait_Z.max() + 0.1, 0.1), density=True, color='purple', alpha=0.7, label='Simulated Distribution')
+plt.title('Expected Trait Distribution (L=3, Non-Linear GP Map)')
+plt.xlabel('Trait Value Z')
+plt.ylabel('Density (Proportion of Population)')
+plt.grid(axis='y', alpha=0.5, linestyle='--')
+plt.axvline(np.mean(trait_Z), color='red', linestyle='dashed', linewidth=1, label=f'Mean Z: {np.mean(trait_Z):.2f}')
+plt.legend()
+plt.savefig('trait_distribution_gp_map.png')
+print(f"Mean Trait Value (Z): {np.mean(trait_Z):.3f}")
+
+```
+```text?code_stdout&code_event_index=2
+Mean Trait Value (Z): -0.039
+\end{comment}
+
+\end{tcolorbox}
+
+
+\end{document}
+
