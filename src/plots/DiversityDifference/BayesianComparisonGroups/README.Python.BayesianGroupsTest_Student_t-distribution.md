@@ -60,11 +60,10 @@ plt.plot(x, stats.skewnorm.pdf(x, *fit_results['Skew-Normal']['params']), label=
 # Laplace
 plt.plot(x, stats.laplace.pdf(x, *fit_results['Laplace']['params']), label='Laplace', lw=2)
 
-plt.title('Comparison of Distribution Fits for div_diff')
+#plt.title('Comparison of Distribution Fits for div_diff')
 plt.legend()
 plt.savefig('distribution_comparison.png')
 plt.show()
-
 
 
 ```
