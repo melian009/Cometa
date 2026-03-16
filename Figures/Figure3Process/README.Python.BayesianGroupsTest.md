@@ -1,4 +1,4 @@
-I want to compare the Bayesian comparison of two groups using the Normal and Gamma
+We used Bayesian comparison of two groups using the Normal and Gamma
 model for the columns correlated_div and modular_div - do their mean and variance significantly differ? 
 
 
